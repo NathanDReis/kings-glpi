@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
-import { KgButton } from '../../components/kg-button/kg-button';
 
 @Component({
   selector: 'app-login',
-  imports: [
-    KgButton
-  ],
+  imports: [],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
