@@ -8,10 +8,11 @@ import {
 import { AuthService } from '../../../core/auth/auth.service';
 import { RouterLink } from '@angular/router';
 import { ToastService } from '../../../services/toast';
+import { InputComponent } from '../../../components/input/input';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, InputComponent],
   templateUrl: './login.html',
   styles: ``,
 })
