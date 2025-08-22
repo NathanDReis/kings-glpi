@@ -7,7 +7,12 @@ import { RouterOutlet } from '@angular/router';
     RouterOutlet
   ],
   templateUrl: './public-layout.component.html',
-  styles: ``,
+  styles: `
+    main {
+      background: #020024;
+      background: linear-gradient(343deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 53%, rgba(0, 212, 255, 1) 100%);
+    }
+  `,
 })
 export class PublicLayout {
   
