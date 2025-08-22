@@ -6,8 +6,8 @@ import { RouterOutlet } from '@angular/router';
   imports: [
     RouterOutlet
   ],
-  templateUrl: './public-layout.html',
-  styleUrl: './public-layout.css'
+  templateUrl: './public-layout.component.html',
+  styles: ``,
 })
 export class PublicLayout {
   

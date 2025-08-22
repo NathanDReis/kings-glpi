@@ -1,27 +1,26 @@
 import { Routes } from '@angular/router';
-import { PublicLayout } from './pages/public/public-layout/public-layout';
-import { LoginComponent } from './pages/public/login/login';
-import { RecoverComponent } from './pages/public/recover/recover';
-import { PrivateLayout } from './pages/private/private-layout/private-layout';
-import { PanelComponent } from './pages/private/panel/panel';
-import { BudgetComponent } from './pages/private/budget/budget';
+import { PublicLayout } from './pages/public/public-layout/public-layout.component';
+import { Login } from './pages/public/login/login.component';
+import { PrivateLayout } from './pages/private/private-layout/private-layout.component';
+import { Panel } from './pages/private/panel/panel.component';
+import { AuthGuard, AuthGuardPublic } from './core/auth/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: PublicLayout,
+    canActivateChild: [AuthGuardPublic],
     children: [
-      { path: 'login', component: LoginComponent },
-      { path: 'recover', component: RecoverComponent },
-      { path: '**', redirectTo: 'login' }
+      { path: 'login', component: Login },
     ]
   },
   {
-    path: 'suporte',
+    path: '',
     component: PrivateLayout,
+    canActivateChild: [AuthGuard],
     children: [
-      { path: 'panel', component: PanelComponent },
-      { path: 'budget', component: BudgetComponent },
+      { path: 'panel', component: Panel },
     ]
   },
+  { path: '**', redirectTo: 'login' },
 ];
