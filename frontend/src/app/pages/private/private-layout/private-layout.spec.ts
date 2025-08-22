@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PrivateLayout } from './private-layout.component';
+import { PrivateLayoutComponent } from './private-layout';
 
-describe('PrivateLayout', () => {
-  let component: PrivateLayout;
-  let fixture: ComponentFixture<PrivateLayout>;
+describe('PrivateLayoutComponent', () => {
+  let component: PrivateLayoutComponent;
+  let fixture: ComponentFixture<PrivateLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PrivateLayout]
+      imports: [PrivateLayoutComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PrivateLayout);
+    fixture = TestBed.createComponent(PrivateLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

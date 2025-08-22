@@ -1,29 +1,24 @@
 import { Component, inject } from '@angular/core';
 import { 
-  Auth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  user 
-} from '@angular/fire/auth';
-import { 
   FormBuilder, 
   FormGroup, 
   ReactiveFormsModule, 
   Validators, 
-  FormControlName 
 } from '@angular/forms';
 import { AuthService } from '../../../core/auth/auth.service';
+import { RouterLink } from '@angular/router';
+import { ToastService } from '../../../services/toast';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
-  templateUrl: './login.component.html',
+  imports: [ReactiveFormsModule, RouterLink],
+  templateUrl: './login.html',
   styles: ``,
 })
-export class Login {
+export class LoginComponent {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private toast = inject(ToastService);
 
   form: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -34,8 +29,8 @@ export class Login {
     try {
       const raw = this.form.getRawValue();
       await this.authService.login(raw.email, raw.password);
-    } catch (error) {
-      console.error('Erro no login:', error);
+    } catch (err) {
+      this.toast.show('Credenciais inválidas', 'error');
     }
   }
 }

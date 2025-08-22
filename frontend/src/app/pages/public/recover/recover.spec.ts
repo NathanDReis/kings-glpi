@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PublicLayout } from './public-layout.component';
+import { Recover } from './recover';
 
-describe('PublicLayout', () => {
-  let component: PublicLayout;
-  let fixture: ComponentFixture<PublicLayout>;
+describe('Recover', () => {
+  let component: Recover;
+  let fixture: ComponentFixture<Recover>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PublicLayout]
+      imports: [Recover]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PublicLayout);
+    fixture = TestBed.createComponent(Recover);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

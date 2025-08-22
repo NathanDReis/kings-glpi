@@ -4,9 +4,9 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-private-layout',
   imports: [RouterOutlet],
-  templateUrl: './private-layout.component.html',
+  templateUrl: './private-layout.html',
   styles: ``,
 })
-export class PrivateLayout {
+export class PrivateLayoutComponent {
 
 }

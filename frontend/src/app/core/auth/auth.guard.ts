@@ -11,7 +11,7 @@ export const AuthGuard: CanActivateFn = () => {
         map(user => {
             if (user) return true;
 
-            router.navigate(['/login']);
+            router.navigate(['/credentials/login']);
             return false;
         })
     );
@@ -25,7 +25,7 @@ export const AuthGuardPublic: CanActivateFn = () => {
         map(user => {
             if (!user) return true;
 
-            router.navigate(['/panel']);
+            router.navigate(['/support/panel']);
             return false;
         })
     );

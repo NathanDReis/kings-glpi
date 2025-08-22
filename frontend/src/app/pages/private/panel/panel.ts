@@ -4,10 +4,10 @@ import { AuthService } from '../../../core/auth/auth.service';
 @Component({
   selector: 'app-panel',
   imports: [],
-  templateUrl: './panel.component.html',
+  templateUrl: './panel.html',
   styles: ``,
 })
-export class Panel {
+export class PanelComponent {
   private authService = inject(AuthService);
 
   logout() {
