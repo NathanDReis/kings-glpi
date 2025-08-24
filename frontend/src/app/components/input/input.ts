@@ -1,7 +1,8 @@
 import { NgClass } from '@angular/common';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Icons } from '../icons';
+import { IconName, Icons } from '../icons';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-input',
@@ -24,7 +25,9 @@ export class InputComponent implements ControlValueAccessor, OnInit {
   @Input() required: boolean = false;
   @Input() id: string = '';
   @Input() class: string = '';
-  @Input() icon: string = '';
+  @Input() icon?: IconName;
+
+  private sanitizer = inject(DomSanitizer);
   
   value: any = '';
   inputId: string = '';
@@ -38,13 +41,6 @@ export class InputComponent implements ControlValueAccessor, OnInit {
   ngOnInit() {
     // Gera um ID único se não for fornecido
     this.inputId = this.id || `input-${Math.random().toString(36).substr(2, 9)}`;
-
-    const svgContainer = document.querySelector('svg-container');
-    console.log(svgContainer)
-    if (!!svgContainer && !!this.icon) {
-      svgContainer.innerHTML = this.getIconSvg(this.icon);
-      console.log(svgContainer.innerHTML)
-    }
   }
 
   // Implementação do ControlValueAccessor
@@ -65,8 +61,9 @@ export class InputComponent implements ControlValueAccessor, OnInit {
   }
 
   // Método para obter o SVG do ícone
-  getIconSvg(iconName: string): string {
-    return this.icons[iconName as keyof typeof this.icons] || '';
+  getIconSvg(iconName: string): SafeHtml {
+    const svg = this.icons[iconName as keyof typeof this.icons] || '';
+    return this.sanitizer.bypassSecurityTrustHtml(svg);
   }
 
   // Método para lidar com mudanças no input
@@ -75,5 +72,20 @@ export class InputComponent implements ControlValueAccessor, OnInit {
     this.value = value;
     this.onChange(value);
     this.onTouched();
+  }
+
+  // Caso seja uma senha, poderá clicar para visualizar
+  tooglePassword(): void {
+    if (this.icon === 'visibility') {
+      this.icon = 'visibilityOff';
+      this.type = 'password';
+      return;
+    }
+   
+    if (this.icon === 'visibilityOff') {
+      this.icon = 'visibility';
+      this.type = 'text';
+      return;
+    }
   }
 }
