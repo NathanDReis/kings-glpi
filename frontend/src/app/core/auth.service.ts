@@ -20,7 +20,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<UserCredential> {
     return signInWithEmailAndPassword(this.auth, email, password)
     .then((user: UserCredential) => {
-      this.router.navigate(['/support/panel']);
+      this.router.navigate(['/painel']);
       return user;
     });
   }
@@ -28,7 +28,7 @@ export class AuthService {
   async logout(): Promise<void> {
     return signOut(this.auth)
     .then(() => {
-      this.router.navigate(['/credentials/login']);
+      this.router.navigate(['/credenciais/entrar']);
     });
   }
 

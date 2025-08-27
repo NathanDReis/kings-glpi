@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth.service';
 import { FormBuilder, FormGroup, Validators, ɵInternalFormsSharedModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastService } from '../../../services/toast';
 

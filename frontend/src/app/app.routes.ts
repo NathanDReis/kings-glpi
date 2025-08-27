@@ -3,28 +3,30 @@ import { PublicLayoutComponent } from './pages/public/public-layout/public-layou
 import { LoginComponent } from './pages/public/login/login';
 import { PrivateLayoutComponent } from './pages/private/private-layout/private-layout';
 import { PanelComponent } from './pages/private/panel/panel';
-import { AuthGuard, AuthGuardPublic } from './core/auth/auth.guard';
+import { AuthGuard, AuthGuardPublic } from './core/auth.guard';
 import { RecoverComponent } from './pages/public/recover/recover';
+import { ProductComponent } from './pages/private/product/product';
+import { BudgetComponent } from './pages/private/budget/budget';
 
 export const routes: Routes = [
   {
-    path: 'credentials',
+    path: 'credenciais',
     component: PublicLayoutComponent,
     canActivateChild: [AuthGuardPublic],
     children: [
-      { path: 'login', component: LoginComponent },
-      { path: 'recover', component: RecoverComponent },
-      { path: '**', redirectTo: 'login' },
+      { path: 'entrar', component: LoginComponent },
+      { path: 'recuperar', component: RecoverComponent },
     ]
   },
   {
-    path: 'support',
+    path: '',
     component: PrivateLayoutComponent,
     canActivateChild: [AuthGuard],
     children: [
-      { path: 'panel', component: PanelComponent },
-      { path: '**', redirectTo: 'panel' },
+      { path: 'painel', component: PanelComponent },
+      { path: 'produto', component: ProductComponent },
+      { path: 'orcamento', component: BudgetComponent },
     ]
   },
-  { path: '**', redirectTo: 'credentials' },
+  { path: '**', redirectTo: 'credenciais/entrar' },
 ];
