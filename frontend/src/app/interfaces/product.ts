@@ -1,7 +1,5 @@
-export interface ProductInterface {
-    id?: string
+import { SoftBaseInterface } from "./softdelete"
+
+export interface ProductInterface extends SoftBaseInterface {
     name: string
-    createdAt: Date
-    updatedAt: Date
-    deletedAt?: Date | null
 }
