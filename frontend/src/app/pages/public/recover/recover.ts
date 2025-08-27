@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { FormBuilder, FormGroup, Validators, ɵInternalFormsSharedModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastService } from '../../../services/toast';
+import { InputComponent } from '../../../components/input/input';
 
 @Component({
   selector: 'app-recover',
-  imports: [RouterLink, ɵInternalFormsSharedModule, ReactiveFormsModule],
+  imports: [RouterLink, ɵInternalFormsSharedModule, ReactiveFormsModule, InputComponent],
   templateUrl: './recover.html',
   styles: ``,
 })

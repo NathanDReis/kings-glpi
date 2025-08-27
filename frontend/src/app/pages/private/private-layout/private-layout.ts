@@ -24,21 +24,5 @@ export class PrivateLayoutComponent implements AfterViewInit {
         menu.classList.toggle("hidden");
       });
     }
-
-    // const btnDropDown = document.getElementById("mega-menu-dropdown-button");
-    // const dropdown = document.getElementById("mega-menu-dropdown");
-
-    // if (btnDropDown && dropdown) {
-    //   btnDropDown.addEventListener("click", () => {
-    //     dropdown.classList.toggle("hidden");
-    //   });
-
-    //   // Fecha ao clicar fora
-    //   document.addEventListener("click", (event) => {
-    //     if (!btnDropDown.contains(event.target as Node) && !dropdown.contains(event.target as Node)) {
-    //       dropdown.classList.add("hidden");
-    //     }
-    //   });
-    // }
   }
 }
