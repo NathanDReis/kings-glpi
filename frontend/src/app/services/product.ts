@@ -1,6 +1,20 @@
 import { inject, Injectable } from '@angular/core';
-import { addDoc, collection, CollectionReference, doc, Firestore, getDocs, query, Timestamp, updateDoc, where } from '@angular/fire/firestore';
+import { 
+  addDoc, 
+  collection, 
+  CollectionReference, 
+  doc, 
+  DocumentData, 
+  DocumentReference, 
+  Firestore, 
+  getDocs, 
+  query, 
+  Timestamp, 
+  updateDoc, 
+  where 
+} from '@angular/fire/firestore';
 import { ProductInterface } from '../interfaces/product';
+import { ToastService } from './toast';
 
 @Injectable({
   providedIn: 'root'
@@ -8,28 +22,23 @@ import { ProductInterface } from '../interfaces/product';
 export class ProductService {
   private fire = inject(Firestore);
   private productsCollection: CollectionReference;
+  private toast = inject(ToastService);
 
   constructor() {
     this.productsCollection = collection(this.fire, 'products');
   }
 
   // CREATE - Criar novo produto
-  async create(product: Omit<ProductInterface, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<string> {
-    try {
-      const now = Timestamp.now();
-      const productData = {
-        ...product,
-        createdAt: now,
-        updatedAt: now,
-        deletedAt: null
-      };
-      
-      const docRef = await addDoc(this.productsCollection, productData);
-      return docRef.id;
-    } catch (error) {
-      console.error('Erro ao criar produto:', error);
-      throw error;
-    }
+  async create(product: Omit<ProductInterface, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<DocumentReference<DocumentData, DocumentData>> {
+    const now = Timestamp.now();
+    const productData = {
+      ...product,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null
+    };
+    
+    return addDoc(this.productsCollection, productData);
   }
 
   // READ - Buscar todos os produtos (exceto deletados)
@@ -50,43 +59,30 @@ export class ProductService {
           ...data 
         } as ProductInterface);
       });
-
-      console.log('Produtos buscados:', products);
       
       return products;
     } catch (error) {
-      console.error('Erro ao buscar produtos:', error);
       throw error;
     }
   }
 
   // UPDATE - Atualizar produto
   async update(id: string, product: Partial<Omit<ProductInterface, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>): Promise<void> {
-    try {
-      const docRef = doc(this.fire, 'products', id);
-      const updateData = {
-        ...product,
-        updatedAt: Timestamp.now()
-      };
-      
-      await updateDoc(docRef, updateData);
-    } catch (error) {
-      console.error('Erro ao atualizar produto:', error);
-      throw error;
-    }
+    const docRef = doc(this.fire, 'products', id);
+    const updateData = {
+      ...product,
+      updatedAt: Timestamp.now()
+    };
+    
+    return updateDoc(docRef, updateData);
   }
 
   // DELETE - Soft delete (marca como deletado)
   async delete(id: string): Promise<void> {
-    try {
-      const docRef = doc(this.fire, 'products', id);
-      await updateDoc(docRef, {
-        deletedAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
-      });
-    } catch (error) {
-      console.error('Erro ao deletar produto:', error);
-      throw error;
-    }
+    const docRef = doc(this.fire, 'products', id);
+    return updateDoc(docRef, {
+      deletedAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
+    });
   }
 }

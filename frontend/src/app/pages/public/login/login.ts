@@ -21,7 +21,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private toast = inject(ToastService);
-  private ld = inject(LoadingService);
+  private loading = inject(LoadingService);
 
   form: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -30,13 +30,13 @@ export class LoginComponent {
 
   async login() {
     try {
-      this.ld.loading(true);
+      this.loading.run();
       const raw = this.form.getRawValue();
       await this.authService.login(raw.email, raw.password);
     } catch (err) {
       this.toast.show('Credenciais inválidas', 'error');
     } finally {
-      this.ld.loading(false);
+      this.loading.stop();
     }
   }
 }

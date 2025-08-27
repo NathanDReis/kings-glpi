@@ -4,9 +4,17 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class LoadingService {
-  isLoading = signal<boolean>(false);
-  
-  loading(run: boolean): void {
-    this.isLoading.set(run);
+  private isLoading = signal<boolean>(false);
+
+  run(): void {
+    this.isLoading.update(() => true);
+  }
+
+  stop(): void {
+    this.isLoading.update(() => false);
+  }
+
+  get current(): boolean {
+    return this.isLoading();
   }
 }

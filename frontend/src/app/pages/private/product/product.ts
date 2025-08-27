@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { Dialog } from 'primeng/dialog';
-import { Ripple } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -12,16 +11,14 @@ import { TextareaModule } from 'primeng/textarea';
 import { CommonModule } from '@angular/common';
 import { FileUpload } from 'primeng/fileupload';
 import { SelectModule } from 'primeng/select';
-import { Tag } from 'primeng/tag';
-import { RadioButton } from 'primeng/radiobutton';
-import { Rating } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
-import { InputNumber } from 'primeng/inputnumber';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Table } from 'primeng/table';
 import { ProductInterface } from '../../../interfaces/product';
 import { ProductService } from '../../../services/product';
+import { ToastService } from '../../../services/toast';
+import { LoadingService } from '../../../services/loading';
 
 interface Column {
     field: string;
@@ -29,17 +26,11 @@ interface Column {
     customExportHeader?: string;
 }
 
-interface ExportColumn {
-    title: string;
-    dataKey: string;
-}
-
 @Component({
   selector: 'app-product',
   imports: [
     TableModule, 
     Dialog, 
-    Ripple, 
     SelectModule, 
     ToastModule, 
     ToolbarModule, 
@@ -48,126 +39,155 @@ interface ExportColumn {
     TextareaModule, 
     CommonModule, 
     FileUpload, 
-    Tag, 
-    RadioButton, 
-    Rating, 
     InputTextModule, 
     FormsModule, 
-    InputNumber, 
     IconFieldModule, 
     InputIconModule,
     ButtonModule,
   ],
-  providers: [MessageService, ConfirmationService],
+  providers: [ConfirmationService],
   templateUrl: './product.html',
   styleUrl: './product.css'
 })
 export class ProductComponent implements OnInit{
     productDialog: boolean = false;
+    actionDialog: string = 'Criar Produto';
 
     products!: ProductInterface[];
-
-    product!: ProductInterface;
-
+    product: ProductInterface = {
+        id: '',
+        name: '',
+        createdAt: new Date(),
+        updatedAt: new Date()
+    };
     selectedProducts!: ProductInterface[] | null;
-
     submitted: boolean = false;
-
-    statuses!: any[];
 
     @ViewChild('dt') dt!: Table;
 
-    cols!: Column[];
-
-    exportColumns!: ExportColumn[];
+    cols: Column[] = [
+        { field: 'id', header: 'Código', customExportHeader: 'Código produto' },
+        { field: 'name', header: 'Nome' },
+    ];
 
     private productService = inject(ProductService);
-    private messageService = inject(MessageService);
     private confirmationService = inject(ConfirmationService);
-
-    constructor(
-        private cd: ChangeDetectorRef
-    ) {}
-
-    exportCSV() {
-        this.dt.exportCSV();
-    }
+    private toast = inject(ToastService);
+    private loading = inject(LoadingService);
+    private cd = inject(ChangeDetectorRef);
 
     ngOnInit() {
-      this.productService.findAll()
-      .then((data) => {
-        console.clear();
-        console.log('Produtos carregados com sucesso:', data);
-      })
-      .catch((error) => {
-        console.clear()
-        console.error('Erro ao carregar produtos:', error);
-      });
-        // this.loadDemoData();
+        this.loadData();
     }
     
-    loadDemoData() {
-        this.productService.findAll().then((data) => {
+    async loadData(): Promise<void> {
+        try {
+            this.loading.run();
+            const data = await this.productService.findAll();
             this.products = data;
+            this.product = {
+                id: '',
+                name: '',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            };
+            
             this.cd.markForCheck();
-        }).catch((error) => {
-          console.clear()
-            console.error('Erro ao carregar produtos:', error);
-        });
-
-        this.statuses = [
-            { label: 'INSTOCK', value: 'instock' },
-            { label: 'LOWSTOCK', value: 'lowstock' },
-            { label: 'OUTOFSTOCK', value: 'outofstock' }
-        ];
-
-        this.cols = [
-            { field: 'code', header: 'Code', customExportHeader: 'Product Code' },
-            { field: 'name', header: 'Name' },
-            { field: 'image', header: 'Image' },
-            { field: 'price', header: 'Price' },
-            { field: 'category', header: 'Category' }
-        ];
-
-        this.exportColumns = this.cols.map((col) => ({ title: col.header, dataKey: col.field }));
-    }
-
-    openNew() {
-        // this.product = {};
-        // this.submitted = false;
-        // this.productDialog = true;
-    }
-
-    editProduct(product: ProductInterface) {
-        this.product = { ...product };
-        this.productDialog = true;
+        } catch (error) {
+            this.toast.show('Não foi possível buscar produtos', 'error', 5000);
+        } finally {
+            this.loading.stop();
+        }
     }
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
-            message: 'Are you sure you want to delete the selected products?',
-            header: 'Confirm',
+            message: 'Deseja deletar todos os produtos selecionados?',
+            header: 'Confirme',
             icon: 'pi pi-exclamation-triangle',
             rejectButtonProps: {
-                label: 'No',
+                label: 'Não',
                 severity: 'secondary',
                 variant: 'text'
             },
             acceptButtonProps: {
                 severity: 'danger',
-                label: 'Yes'
+                label: 'Sim'
             },
-            accept: () => {
-                this.products = this.products.filter((val) => !this.selectedProducts?.includes(val));
-                this.selectedProducts = null;
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Products Deleted',
-                    life: 3000
-                });
+            accept: async () => {
+                try {
+                    this.loading.run();
+                    const promiseDelete = this.selectedProducts?.map(async (product) => this.productService.delete(product.id!));
+                    const results = await Promise.allSettled(promiseDelete || []);
+
+                    const failedDeletions = results.filter(result => result.status === 'rejected');
+
+                    if (failedDeletions.length > 0) {
+                        this.toast.show(`${failedDeletions.length} produto(s) não puderam ser deletados`, 'error', 5000);
+                    }
+
+                    this.loadData();
+                } catch (error) {
+                    this.toast.show('Não foi possível deletar os produtos', 'error', 5000);
+                } finally {
+                    this.loading.stop();
+                }
             }
         });
+    }
+
+    deleteProduct(product: ProductInterface): void {
+        this.confirmationService.confirm({
+            message: 'Você deseja deletar ' + product.name + '?',
+            header: 'Confirme',
+            icon: 'pi pi-exclamation-triangle',
+            rejectButtonProps: {
+                label: 'Não',
+                severity: 'secondary',
+                variant: 'text'
+            },
+            acceptButtonProps: {
+                severity: 'danger',
+                label: 'Sim'
+            },
+            accept: async () => {
+                try {
+                    this.loading.run();
+                    await this.productService.delete(product.id!);
+                    this.loadData();
+                    this.toast.show('Produto excluido', 'success');
+                } catch (error) {
+                    this.toast.show('Não foi possível deletar produto', 'error', 5000);
+                } finally {
+                    this.loading.stop();
+                }
+            }
+        });
+    }
+
+    async saveProduct(): Promise<void> {
+        try {
+            this.loading.run();
+            this.submitted = true;
+    
+            if (!this.product?.name.trim()) return 
+
+            const {id, ...data} = this.product; 
+            
+            if (this.product?.id) {
+                await this.productService.update(this.product.id, data);
+                this.toast.show('Produto atualizado', 'success');
+            } else {
+                await this.productService.create(data);
+                this.toast.show('Produto criado', 'success');
+            }
+    
+            this.productDialog = false;
+            this.loadData();
+        } catch (error) {
+            this.loading.stop();
+            this.toast.show(`Não foi possível ${this.product?.id ? 'atualizar' : 'criar'} produto`, 'error', 5000);
+        }
     }
 
     hideDialog() {
@@ -175,84 +195,21 @@ export class ProductComponent implements OnInit{
         this.submitted = false;
     }
 
-    deleteProduct(product: ProductInterface) {
-        // this.confirmationService.confirm({
-        //     message: 'Are you sure you want to delete ' + product.name + '?',
-        //     header: 'Confirm',
-        //     icon: 'pi pi-exclamation-triangle',
-        //     rejectButtonProps: {
-        //         label: 'No',
-        //         severity: 'secondary',
-        //         variant: 'text'
-        //     },
-        //     acceptButtonProps: {
-        //         severity: 'danger',
-        //         label: 'Yes'
-        //     },
-        //     accept: () => {
-        //         this.products = this.products.filter((val) => val.id !== product.id);
-        //         this.product = {};
-        //         this.messageService.add({
-        //             severity: 'success',
-        //             summary: 'Successful',
-        //             detail: 'Product Deleted',
-        //             life: 3000
-        //         });
-        //     }
-        // });
+    openNew() {
+        this.product = {
+            id: '',
+            name: '',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+        this.submitted = false;
+        this.productDialog = true;
+        this.actionDialog = 'Criar Produto';
     }
 
-    findIndexById(id: string): number {
-        let index = -1;
-        for (let i = 0; i < this.products.length; i++) {
-            if (this.products[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    }
-
-    getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | undefined {
-        switch (status) {
-            case 'INSTOCK':
-                return 'success';
-            case 'LOWSTOCK':
-                return 'warn';
-            case 'OUTOFSTOCK':
-                return 'danger';
-            default:
-                return undefined;
-        }
-    }
-
-    saveProduct(): void {
-        // this.submitted = true;
-
-        // if (this.product.name?.trim()) {
-        //     if (this.product.id) {
-        //         this.products[this.findIndexById(this.product.id)] = this.product;
-        //         this.messageService.add({
-        //             severity: 'success',
-        //             summary: 'Successful',
-        //             detail: 'Product Updated',
-        //             life: 3000
-        //         });
-        //     } else {
-        //         this.product.id = this.createId();
-        //         this.products.push(this.product);
-        //         this.messageService.add({
-        //             severity: 'success',
-        //             summary: 'Successful',
-        //             detail: 'Product Created',
-        //             life: 3000
-        //         });
-        //     }
-
-        //     this.products = [...this.products];
-        //     this.productDialog = false;
-        //     this.product = {};
-        // }
+    editProduct(product: ProductInterface) {
+        this.product = { ...product };
+        this.productDialog = true;
+        this.actionDialog = 'Editar Produto';
     }
 }

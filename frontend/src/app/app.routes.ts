@@ -26,7 +26,7 @@ export const routes: Routes = [
       { path: 'painel', component: PanelComponent },
       { path: 'produto', component: ProductComponent },
       { path: 'orcamento', component: BudgetComponent },
+      { path: '**', redirectTo: '/painel' },
     ]
   },
-  { path: '**', redirectTo: 'credenciais/entrar' },
 ];
