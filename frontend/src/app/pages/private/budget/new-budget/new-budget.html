@@ -1,0 +1,87 @@
+<div class="mb-4 p-8">
+  <div class="flex w-full">
+    <p-card class="w-full flex justify-between items-center" header="Novo orçamento">
+      <ng-template #content>
+        <h2 class="text-3xl font-bold text-green-600">R$ 0,00</h2>
+      </ng-template>
+      
+      <ng-template #footer>
+        <div class="flex justify-end gap-12">
+          <p-button label="Cancelar" icon="pi pi-times" text (click)="hidePage()" />
+          <p-button label="Salvar" [disabled]="formInvalid()" icon="pi pi-check" (click)="saveBudget()" />
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+
+  <div class="flex w-full justify-between flex-wrap gap-8 mt-8">
+    <p-card header="Dados do orçamento" class="w-full lg:w-[30%]">
+      <ng-template #content>
+        <div class="flex flex-col gap-6">
+          <div>
+            <label for="name" class="block font-bold mb-3">Nome</label>
+            <input type="text" pInputText id="name" [(ngModel)]="budget.name" required autofocus fluid />
+            @if (!budget.name || (!!budget.name && budget.name.trim().length === 0) ) {
+              <p class="text-red-500" >Nome é obrigatório.</p>
+            }
+          </div>
+          <div>
+            <label for="description" class="block font-bold mb-3">Descrição</label>
+            <textarea id="description" rows="5" cols="30" pTextarea [(ngModel)]="budget.description" class="min-h-14" fluid></textarea>
+          </div>
+
+          <div class="flex items-center justify-between flex-wrap gap-6">
+            <div class="grow">
+              <label for="status" class="block font-bold mb-3">Status</label>
+              <p-select id="status" [options]="statusSelect" [(ngModel)]="budget.status" optionLabel="label" optionValue="value" placeholder="Selecione um status" class="w-full" />
+            </div>
+            <div class="grow">
+              <label for="workforce" class="block font-bold mb-3">Mão de obra</label>
+              <p-inputnumber [(ngModel)]="budget.workforce" inputId="workforce" mode="currency" currency="BRL" locale="pt-BR"  class="w-full" />
+            </div>
+          </div>
+
+          <div>
+            <label for="responsible" class="block font-bold mb-3">Responsável</label>
+            <input type="text" pInputText id="responsible" [(ngModel)]="budget.responsible" required autofocus fluid />
+            @if (!budget.responsible || (!!budget.responsible && budget.responsible.trim().length === 0) ) {
+              <p class="text-red-500" >Responsável é obrigatório.</p>
+            }
+          </div>
+        </div>
+      </ng-template>
+    </p-card>
+  
+    <p-card header="Produtos do orçamento" class="w-full lg:w-[65%]">
+      
+    </p-card>
+  </div>
+
+  <div class="flex w-full gap-8 mt-8">
+    <p-card header="Cliente do orçamento" class="w-full">
+      <ng-template #content>
+        <div class="flex items-start justify-center flex-wrap gap-6">
+          <div class="grow"> 
+            <label for="name" class="block font-bold mb-3">Nome</label>
+            <input type="text" pInputText id="name" [(ngModel)]="budget.client.name" required autofocus fluid />
+            @if (!budget.client.name || (!!budget.client.name && budget.client.name.trim().length === 0) ) {
+              <p class="text-red-500" >Nome é obrigatório.</p>
+            }
+          </div>
+          <div class="grow"> 
+            <label for="cnpj" class="block font-bold mb-3">CNPJ</label>
+            <input type="text" pInputText id="cnpj" [(ngModel)]="budget.client.cnpj" autofocus fluid />
+          </div>
+          <div class="grow"> 
+            <label for="email" class="block font-bold mb-3">E-mail</label>
+            <input type="text" pInputText id="email" [(ngModel)]="budget.client.email" autofocus fluid />
+          </div>
+          <div class="grow"> 
+            <label for="phone" class="block font-bold mb-3">Telefone</label>
+            <input type="text" pInputText id="phone" [(ngModel)]="budget.client.phone" autofocus fluid />
+          </div>
+        </div>
+      </ng-template>
+    </p-card>
+  </div>
+</div>

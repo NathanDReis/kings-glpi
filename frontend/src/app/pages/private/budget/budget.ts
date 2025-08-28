@@ -28,6 +28,8 @@ import { BudgetInterface } from '../../../interfaces/budget';
 import { BudgetService } from '../../../services/budget';
 import { ToastService } from '../../../services/toast';
 import { LoadingService } from '../../../services/loading';
+import { Router } from '@angular/router';
+import { Timestamp } from '@angular/fire/firestore';
 
 interface Column {
     field: string;
@@ -78,8 +80,8 @@ export class BudgetComponent implements OnInit {
             cnpj: ''
         },
         products: [],
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
     };
     selectedBudgets!: BudgetInterface[] | null;
     submitted: boolean = false;
@@ -94,6 +96,7 @@ export class BudgetComponent implements OnInit {
         { field: 'responsible', header: 'Responsável' },
     ];
 
+    private router = inject(Router);
     private budgetService = inject(BudgetService);
     private confirmationService = inject(ConfirmationService);
     private toast = inject(ToastService);
@@ -122,8 +125,8 @@ export class BudgetComponent implements OnInit {
                     cnpj: ''
                 },
                 products: [],
-                createdAt: new Date(),
-                updatedAt: new Date()
+                createdAt: Timestamp.now(),
+                updatedAt: Timestamp.now()
             };
             this.cd.markForCheck();
         } catch (error) {
@@ -198,61 +201,11 @@ export class BudgetComponent implements OnInit {
         });
     }
 
-    async saveBudget(): Promise<void> {
-        try {
-            this.loading.run();
-            this.submitted = true;
-
-            if (!this.budget?.name.trim()) return
-
-            const {id, ...data} = this.budget;
-
-            if (this.budget?.id) {
-                await this.budgetService.update(this.budget.id, data);
-                this.toast.show('Orçamento atualizado', 'success');
-            } else {
-                await this.budgetService.create(data);
-                this.toast.show('Orçamento criado', 'success');
-            }
-
-            this.budgetDialog = false;
-            this.loadData();
-        } catch (error) {
-            this.loading.stop();
-            this.toast.show(`Não foi possível ${this.budget?.id ? 'atualizar' : 'criar'} orçamento`, 'error', 5000);
-        }
-    }
-
-    hideDialog() {
-        this.budgetDialog = false;
-        this.submitted = false;
-    }
-
     openNew() {
-        this.budget = {
-            id: '',
-            name: '',
-            status: 'pending',
-            price: 0,
-            responsible: '',
-            client: {
-                name: '',
-                email: '',
-                phone: '',
-                cnpj: ''
-            },
-            products: [],
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-        this.submitted = false;
-        this.budgetDialog = true;
-        this.actionDialog = 'Criar Orçamento';
+        this.router.navigate(['/orcamento-criar']);
     }
 
     editBudget(budget: BudgetInterface) {
-        this.budget = { ...budget };
-        this.budgetDialog = true;
-        this.actionDialog = 'Editar Orçamento';
+        
     }
 }

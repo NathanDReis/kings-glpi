@@ -7,6 +7,8 @@ import { AuthGuard, AuthGuardPublic } from './core/auth.guard';
 import { RecoverComponent } from './pages/public/recover/recover';
 import { ProductComponent } from './pages/private/product/product';
 import { BudgetComponent } from './pages/private/budget/budget';
+import { ConfigComponent } from './pages/private/config/config';
+import { NewBudgetComponent } from './pages/private/budget/new-budget/new-budget';
 
 export const routes: Routes = [
   {
@@ -26,6 +28,8 @@ export const routes: Routes = [
       { path: 'painel', component: PanelComponent },
       { path: 'produto', component: ProductComponent },
       { path: 'orcamento', component: BudgetComponent },
+      { path: 'orcamento-criar', component: NewBudgetComponent },
+      { path: 'configuracoes', component: ConfigComponent },
       { path: '**', redirectTo: '/painel' },
     ]
   },

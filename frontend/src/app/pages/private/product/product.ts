@@ -7,6 +7,7 @@ import {
     ViewChild 
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Timestamp } from '@angular/fire/firestore';
 
 import { ConfirmationService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
@@ -59,8 +60,8 @@ export class ProductComponent implements OnInit{
     product: ProductInterface = {
         id: '',
         name: '',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
     };
     selectedProducts!: ProductInterface[] | null;
     submitted: boolean = false;
@@ -92,8 +93,8 @@ export class ProductComponent implements OnInit{
             this.product = {
                 id: '',
                 name: '',
-                createdAt: new Date(),
-                updatedAt: new Date()
+                createdAt: Timestamp.now(),
+                updatedAt: Timestamp.now()
             };
             
             this.cd.markForCheck();
@@ -203,8 +204,8 @@ export class ProductComponent implements OnInit{
         this.product = {
             id: '',
             name: '',
-            createdAt: new Date(),
-            updatedAt: new Date()
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now()
         };
         this.submitted = false;
         this.productDialog = true;

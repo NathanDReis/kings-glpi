@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
 import { ConfirmationService, MenuItem } from 'primeng/api';
 import { BadgeModule } from 'primeng/badge';
@@ -34,6 +34,7 @@ import { AuthService } from '../../../core/auth.service';
 export class PrivateLayoutComponent implements AfterViewInit, OnInit {
   private authService = inject(AuthService);
   private confirmationService = inject(ConfirmationService);
+  private router = inject(Router)
 
   logout() {
     this.confirmationService.confirm({
@@ -99,76 +100,17 @@ export class PrivateLayoutComponent implements AfterViewInit, OnInit {
 
   itemsConfig: MenuItem[] = [
     {
-      label: 'Usuário',
-      icon: 'pi pi-fw pi-user',
-      items: [
-        // {
-        //   label: 'Novo',
-        //   icon: 'pi pi-fw pi-user-plus'
-        // },
-        // {
-        //   label: 'Editar',
-        //   icon: 'pi pi-fw pi-user-minus'
-        // },
-        // {
-        //   label: 'Pesquisar',
-        //   icon: 'pi pi-fw pi-users',
-        //   items: [
-        //     {
-        //       label: 'Filtrar',
-        //       icon: 'pi pi-fw pi-filter',
-        //       items: [
-        //         {
-        //           label: 'Print',
-        //           icon: 'pi pi-fw pi-print'
-        //         }
-        //       ]
-        //     },
-        //     {
-        //       icon: 'pi pi-fw pi-bars',
-        //       label: 'Listar'
-        //     }
-        //   ]
-        // }
-      ]
-    },
-    {
       label: 'Configurações',
       icon: 'pi pi-fw pi-cog',
-      // items: [
-      //   {
-      //     label: 'Edit',
-      //     icon: 'pi pi-fw pi-pencil',
-      //     items: [
-      //       {
-      //         label: 'Save',
-      //         icon: 'pi pi-fw pi-calendar-plus'
-      //       },
-      //       {
-      //         label: 'Delete',
-      //         icon: 'pi pi-fw pi-calendar-minus'
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     label: 'Archieve',
-      //     icon: 'pi pi-fw pi-calendar-times',
-      //     items: [
-      //       {
-      //         label: 'Remove',
-      //         icon: 'pi pi-fw pi-calendar-minus'
-      //       }
-      //     ]
-      //   }
-      // ]
+      command: () => this.router.navigate(['/configuracoes'])
     },
     {
       separator: true
     },
     {
       label: 'Sair',
-      icon: 'pi pi-fw pi-power-off'
-      , command: () => this.logout()
+      icon: 'pi pi-fw pi-power-off',
+      command: () => this.logout()
     }
   ];
 }
