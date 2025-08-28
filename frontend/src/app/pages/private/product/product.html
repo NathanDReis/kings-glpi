@@ -1,4 +1,4 @@
-<div class="card mx-20 py-24">
+<div class="card mx-6 py-12 md:mx-20 md:py-24">
     <p-toolbar class="mb-6">
         <ng-template #start>
             <p-button label="New" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" />
@@ -19,13 +19,14 @@
         dataKey="id"
         currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} resultados"
         [showCurrentPageReport]="true"
+        [size]="'small'"
     >
         <ng-template #caption>
             <div class="flex items-center justify-between">
                 <h5 class="m-0">Meus produtos</h5>
                 <p-iconfield>
                     <p-inputicon class="pi pi-search" />
-                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Consultar..." />
+                    <input pInputText type="text" class="md:w-auto w-30" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Consultar..." />
                 </p-iconfield>
             </div>
         </ng-template>
@@ -34,7 +35,7 @@
                 <th style="width: 3rem">
                     <p-tableHeaderCheckbox />
                 </th>
-                <th>Código</th>
+                <!-- <th>Código</th> -->
                 <th pSortableColumn="name">
                     <div class="flex items-center gap-2">
                         Nome
@@ -53,7 +54,7 @@
                         <p-sortIcon field="model" />
                     </div>
                 </th>
-                <th style="min-width: 10rem"></th>
+                <th></th>
             </tr>
         </ng-template>
         <ng-template #body let-product>
@@ -61,10 +62,10 @@
                 <td style="width: 3rem">
                     <p-tableCheckbox [value]="product" />
                 </td>
-                <td style="min-width: 12rem">{{ product.id }}</td>
-                <td style="min-width: 16rem">{{ product.name }}</td>
-                <td style="min-width: 16rem">{{ product.brand }}</td>
-                <td style="min-width: 16rem">{{ product.model }}</td>
+                <!-- <td style="min-width: 12rem">{{ product.id }}</td> -->
+                <td>{{ product.name }}</td>
+                <td>{{ product.brand }}</td>
+                <td>{{ product.model }}</td>
                 <td>
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editProduct(product)" />
                     <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(product)" />

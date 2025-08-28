@@ -9,8 +9,8 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './public-layout.html',
   styles: `
     main {
-      background: #020024;
       background: linear-gradient(343deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 53%, rgba(0, 212, 255, 1) 100%);
+      background: #020024;
     }
   `,
 })

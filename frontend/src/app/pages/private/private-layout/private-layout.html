@@ -25,13 +25,14 @@
         </ng-template>
 
         <ng-template #end>
-            <div class="flex items-center gap-2">
-                <!-- <input type="text" pInputText placeholder="Search" class="w-36" /> -->
-                <p-avatar icon="pi pi-user" style="background-color: #dee9fc; color: #1a2551" shape="circle" />
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-gray-500">v1.0.0</span>
+                <p-splitbutton [model]="itemsConfig" icon="pi pi-user" /> 
             </div>
         </ng-template>
     </p-menubar>
 
     <router-outlet></router-outlet>
 
+    <p-confirmdialog key="positionDialog" position="topright" [style]="{ width: '400px' }" />
 </main>
