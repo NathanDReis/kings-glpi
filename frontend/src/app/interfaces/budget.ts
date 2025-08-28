@@ -1,24 +1,24 @@
 import { SoftBaseInterface } from "./softdelete"
 
-export interface OrcamentoInterface extends SoftBaseInterface {
+export interface BudgetInterface extends SoftBaseInterface {
   name: string
   description?: string 
   status: 'pending' | 'approved' | 'rejected'
   workforce?: number
   price: number
   responsible: string
-  client: OrcamentoClientInterface
-  products: OrcamentoProductInterface[]
+  client: BudgetClientInterface
+  products: BudgetProductInterface[]
 }
 
-export interface OrcamentoClientInterface {
+export interface BudgetClientInterface {
   name: string
   email: string
   phone: string
   cnpj: string
 }
 
-export interface OrcamentoProductInterface {
+export interface BudgetProductInterface {
   name: string
   quantity: number
   price: number

@@ -1,1 +1,91 @@
-<p>budget works!</p>
+<div class="card mx-20 py-24">
+    <p-toolbar class="mb-6">
+        <ng-template #start>
+            <p-button label="Novo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" />
+            <p-button severity="danger" label="Deletar" icon="pi pi-trash" outlined (onClick)="deleteSelectedBudgets()" [disabled]="!selectedBudgets || !selectedBudgets.length" />
+        </ng-template>
+    </p-toolbar>
+
+    <p-table
+        #dt
+        [value]="budgets"
+        [rows]="5"
+        [columns]="cols"
+        [paginator]="true"
+        [globalFilterFields]="['name', 'responsible', 'client.name']"
+        [tableStyle]="{ 'min-width': '75rem' }"
+        [(selection)]="selectedBudgets"
+        [rowHover]="true"
+        dataKey="id"
+        currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} resultados"
+        [showCurrentPageReport]="true"
+    >
+        <ng-template #caption>
+            <div class="flex items-center justify-between">
+                <h5 class="m-0">Meus Orçamentos</h5>
+                <p-iconfield>
+                    <p-inputicon class="pi pi-search" />
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Consultar..." />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox />
+                </th>
+                <th>Código</th>
+                <th pSortableColumn="name">
+                    <div class="flex items-center gap-2">
+                        Nome
+                        <p-sortIcon field="name" />
+                    </div>
+                </th>
+                <th pSortableColumn="status">
+                    <div class="flex items-center gap-2">
+                        Status
+                        <p-sortIcon field="status" />
+                    </div>
+                </th>
+                <th pSortableColumn="price">
+                    <div class="flex items-center gap-2">
+                        Preço
+                        <p-sortIcon field="price" />
+                    </div>
+                </th>
+                <th pSortableColumn="responsible">
+                    <div class="flex items-center gap-2">
+                        Responsável
+                        <p-sortIcon field="responsible" />
+                    </div>
+                </th>
+                <th pSortableColumn="client.name">
+                    <div class="flex items-center gap-2">
+                        Cliente
+                        <p-sortIcon field="client.name" />
+                    </div>
+                </th>
+                <th style="min-width: 10rem"></th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-budget>
+            <tr>
+                <td style="width: 3rem">
+                    <p-tableCheckbox [value]="budget" />
+                </td>
+                <td style="min-width: 12rem">{{ budget.id }}</td>
+                <td style="min-width: 16rem">{{ budget.name }}</td>
+                <td style="min-width: 10rem">{{ budget.status }}</td>
+                <td style="min-width: 10rem">{{ budget.price | currency:'BRL':'symbol':'1.2-2' }}</td>
+                <td style="min-width: 16rem">{{ budget.responsible }}</td>
+                <td style="min-width: 16rem">{{ budget.client?.name }}</td>
+                <td>
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editBudget(budget)" />
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteBudget(budget)" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p-confirmDialog [style]="{ width: '450px' }" />
+</div>

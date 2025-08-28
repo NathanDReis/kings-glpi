@@ -1,20 +1,25 @@
-import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { 
+    ChangeDetectorRef, 
+    Component, 
+    inject, 
+    OnInit, 
+    ViewChild 
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 import { ConfirmationService } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { Dialog } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { CommonModule } from '@angular/common';
-import { FileUpload } from 'primeng/fileupload';
-import { SelectModule } from 'primeng/select';
-import { FormsModule } from '@angular/forms';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { Table } from 'primeng/table';
+
 import { ProductInterface } from '../../../interfaces/product';
 import { ProductService } from '../../../services/product';
 import { ToastService } from '../../../services/toast';
@@ -31,14 +36,11 @@ interface Column {
   imports: [
     TableModule, 
     Dialog, 
-    SelectModule, 
-    ToastModule, 
     ToolbarModule, 
     ConfirmDialog, 
     InputTextModule, 
     TextareaModule, 
     CommonModule, 
-    FileUpload, 
     InputTextModule, 
     FormsModule, 
     IconFieldModule, 
@@ -66,8 +68,10 @@ export class ProductComponent implements OnInit{
     @ViewChild('dt') dt!: Table;
 
     cols: Column[] = [
-        { field: 'id', header: 'Código', customExportHeader: 'Código produto' },
+        { field: 'id', header: 'Código' },
         { field: 'name', header: 'Nome' },
+        { field: 'brand', header: 'Marca' },
+        { field: 'model', header: 'Modelo' },
     ];
 
     private productService = inject(ProductService);

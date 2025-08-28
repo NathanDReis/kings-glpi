@@ -1,13 +1,8 @@
-<div class="card mx-20 mt-24">
-    <!-- <p-toast /> -->
+<div class="card mx-20 py-24">
     <p-toolbar class="mb-6">
         <ng-template #start>
             <p-button label="New" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" />
             <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
-        </ng-template>
-
-        <ng-template #end>
-            <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" auto customUpload class="mr-2 inline-block" [chooseButtonProps]="{ severity: 'secondary' }" />
         </ng-template>
     </p-toolbar>
 
@@ -46,6 +41,18 @@
                         <p-sortIcon field="name" />
                     </div>
                 </th>
+                <th pSortableColumn="brand">
+                    <div class="flex items-center gap-2">
+                        Marca
+                        <p-sortIcon field="brand" />
+                    </div>
+                </th>
+                <th pSortableColumn="model">
+                    <div class="flex items-center gap-2">
+                        Modelo
+                        <p-sortIcon field="model" />
+                    </div>
+                </th>
                 <th style="min-width: 10rem"></th>
             </tr>
         </ng-template>
@@ -56,6 +63,8 @@
                 </td>
                 <td style="min-width: 12rem">{{ product.id }}</td>
                 <td style="min-width: 16rem">{{ product.name }}</td>
+                <td style="min-width: 16rem">{{ product.brand }}</td>
+                <td style="min-width: 16rem">{{ product.model }}</td>
                 <td>
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editProduct(product)" />
                     <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(product)" />
@@ -74,12 +83,20 @@
                         <p class="text-red-500" >Nome é obrigatório.</p>
                     }
                 </div>
+                <div>
+                    <label for="brand" class="block font-bold mb-3">Marca</label>
+                    <input type="text" pInputText id="brand" [(ngModel)]="product.brand" fluid />
+                </div>
+                <div>
+                    <label for="model" class="block font-bold mb-3">Modelo</label>
+                    <input type="text" pInputText id="model" [(ngModel)]="product.model" fluid />
+                </div>
             </div>
         </ng-template>
 
         <ng-template #footer>
             <p-button label="Cancelar" icon="pi pi-times" text (click)="hideDialog()" />
-            <p-button label="Salvar" icon="pi pi-check" (click)="saveProduct()" />
+            <p-button label="Salvar" [disabled]="!product.name.trim()" icon="pi pi-check" (click)="saveProduct()" />
         </ng-template>
     </p-dialog>
 
