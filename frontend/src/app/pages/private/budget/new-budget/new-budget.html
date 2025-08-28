@@ -1,4 +1,4 @@
-<div class="mb-4 p-8">
+<div class="p-8">
   <div class="flex w-full">
     <p-card class="w-full flex justify-between items-center" header="Novo orçamento">
       <ng-template #content>
@@ -53,7 +53,10 @@
     </p-card>
   
     <p-card header="Produtos do orçamento" class="w-full lg:w-[65%]">
-      
+      <div>
+        <label for="product-name" class="block font-bold mb-3">Produto</label>
+        <p-select id="product-name" [options]="productsSelect" optionLabel="name" optionValue="id" placeholder="Selecione um produto" class="w-full" />
+      </div>
     </p-card>
   </div>
 
@@ -74,7 +77,7 @@
           </div>
           <div class="grow"> 
             <label for="email" class="block font-bold mb-3">E-mail</label>
-            <input type="text" pInputText id="email" [(ngModel)]="budget.client.email" autofocus fluid />
+            <input type="email" pInputText id="email" [(ngModel)]="budget.client.email" autofocus fluid />
           </div>
           <div class="grow"> 
             <label for="phone" class="block font-bold mb-3">Telefone</label>
