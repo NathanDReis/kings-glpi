@@ -9,13 +9,13 @@ import {
   DocumentReference, 
   Firestore, 
   getDocs, 
+  orderBy, 
   query, 
   Timestamp, 
   updateDoc, 
   where 
 } from '@angular/fire/firestore';
 import { BudgetInterface } from '../interfaces/budget';
-import { ToastService } from './toast';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,6 @@ import { ToastService } from './toast';
 export class BudgetService {
   private fire = inject(Firestore);
   private budgetsCollection: CollectionReference;
-  private toast = inject(ToastService);
 
   constructor() {
     this.budgetsCollection = collection(this.fire, 'budgets');
@@ -46,7 +45,8 @@ export class BudgetService {
     try {
       const q = query(
         this.budgetsCollection,
-        where('deletedAt', '==', null)
+        where('deletedAt', '==', null),
+        orderBy('updatedAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
       const budgets: BudgetInterface[] = [];
@@ -73,8 +73,6 @@ export class BudgetService {
       );  
       const docSnapshot = await getDocs(q);
       if (docSnapshot.empty) return null;
-
-      console.log(docSnapshot.docs[0].data());
 
       const data = docSnapshot.docs[0].data();
       return { id: docSnapshot.docs[0].id, ...data } as BudgetInterface;

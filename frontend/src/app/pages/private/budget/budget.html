@@ -24,7 +24,7 @@
                 <h5 class="m-0">Meus Orçamentos</h5>
                 <p-iconfield>
                     <p-inputicon class="pi pi-search" />
-                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Consultar..." />
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Consultar..." fluid />
                 </p-iconfield>
             </div>
         </ng-template>
@@ -33,16 +33,16 @@
                 <th>
                     <p-tableHeaderCheckbox />
                 </th>
-                <th pSortableColumn="name">
-                    <div class="flex items-center gap-2">
-                        Nome
-                        <p-sortIcon field="name" />
-                    </div>
-                </th>
                 <th pSortableColumn="status">
                     <div class="flex items-center gap-2">
                         Status
                         <p-sortIcon field="status" />
+                    </div>
+                </th>
+                <th pSortableColumn="name">
+                    <div class="flex items-center gap-2">
+                        Nome
+                        <p-sortIcon field="name" />
                     </div>
                 </th>
                 <th pSortableColumn="price">
@@ -68,21 +68,49 @@
         </ng-template>
         <ng-template #body let-budget>
             <tr>
-                <td style="width: 3rem">
+                <td style="width: 3rem" [ngClass]="{ 'bg-[#FACC15]': budget.status === 'pending', 'bg-[#22C55E]': budget.status === 'approved', 'bg-[#EF4444]': budget.status === 'rejected' }">
                     <p-tableCheckbox [value]="budget" />
                 </td>
-                <td>{{ budget.name }}</td>
                 <td>{{ statusMap[budget.status] }}</td>
-                <td>{{ budget.price | currency:'BRL' }}</td>
+                <td>{{ budget.name }}</td>
+                <td>{{ budget.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
                 <td>{{ budget.responsible }}</td>
-                <td>{{ budget.client?.name }}</td>
                 <td>
+                    <p-button icon="pi pi-info" class="mr-3" [rounded]="true" [outlined]="true" [raised]="false" severity="info" (onClick)="openDialogClient(budget.client)" />
+                    {{ budget.client?.name }}
+                </td>
+                <td>
+                    <p-button icon="pi pi-file-pdf" severity="contrast" class="mr-2" [rounded]="true" [outlined]="true" (click)="download(budget)" />
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editBudget(budget)" />
                     <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteBudget(budget)" />
                 </td>
             </tr>
         </ng-template>
     </p-table>
+
+    <div id="content" #content class="hidden">
+        <template-pdf [budget]="budgetSelected"></template-pdf>
+    </div>
+
+    <p-dialog header="Informações de contato" [modal]="true" [(visible)]="visibleInfoClient" [style]="{ width: '25rem' }">
+        <span class="p-text-secondary block mb-8">{{ client.name }}</span>
+        <div class="flex items-center gap-4 mb-4">
+            <label class="font-semibold w-24">E-mail</label>
+            <span>{{ client.email }}</span>
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+            <label class="font-semibold w-24">Celular</label>
+            <span>{{ client.phone }}</span>
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+            <label class="font-semibold w-24">
+                {{ client.cnpj ? 'CNPJ' : 'CPF' }}
+            </label>
+            <span>
+                {{ client.cnpj ? client.cnpj : client.cpf }}
+            </span>
+        </div>
+    </p-dialog>
 
     <p-confirmDialog [style]="{ width: '450px' }" />
 </div>

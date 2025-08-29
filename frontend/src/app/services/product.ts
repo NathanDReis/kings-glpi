@@ -8,6 +8,7 @@ import {
   DocumentReference, 
   Firestore, 
   getDocs, 
+  orderBy, 
   query, 
   Timestamp, 
   updateDoc, 
@@ -46,7 +47,8 @@ export class ProductService {
     try {
       const q = query(
         this.productsCollection,
-        where('deletedAt', '==', null)
+        where('deletedAt', '==', null),
+        orderBy('name', 'asc')
       );
       
       const querySnapshot = await getDocs(q);

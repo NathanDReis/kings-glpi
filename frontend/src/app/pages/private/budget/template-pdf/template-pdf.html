@@ -1,0 +1,55 @@
+<div id="content" #content>
+
+  <header>
+    <img src="header.png" id="bg-header">
+    <img src="logo.png" id="logo">
+  </header>
+
+  <main>
+    <div class="flex justify-between mb-10">
+      <h1 class="text-[#003477] font-extrabold text-2xl">ORÇAMENTO</h1>
+
+      <div class="box">
+        <p>DATA:</p>
+        <span class="date">
+          {{ date }}
+        </span>
+      </div>
+    </div>
+
+    <div class="grid gap-1.5">
+      <div class="box">
+        <p>Cliente:</p>
+
+        <span class="under">
+          {{ budget ? budget.client.name : '' }}
+        </span>
+      </div>
+
+      <div class="box">
+        <p>{{ budget ? budget.client.cnpj ? 'CNPJ' : 'CPF' : 'CNPJ' }}:</p>
+
+        <span class="under">
+            {{ budget ? budget.client.cnpj ? budget.client.cnpj : budget.client.cpf : '' }}
+        </span>
+      </div>
+
+      <div class="box">
+        <p>Celular:</p>
+
+        <span class="under">
+            {{ budget ? budget.client.phone : '' }}
+        </span>
+      </div>
+
+      <div class="box">
+        <p>Email:</p>
+
+        <span class="under">
+            {{ budget ? budget.client.email : '' }}
+        </span>
+      </div>
+    </div>
+  </main>
+
+</div>

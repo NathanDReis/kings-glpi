@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { AuthService } from '../../../core/auth.service';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-panel',
@@ -8,9 +7,5 @@ import { AuthService } from '../../../core/auth.service';
   styles: ``,
 })
 export class PanelComponent {
-  private authService = inject(AuthService);
 
-  logout() {
-    this.authService.logout();
-  }
 }

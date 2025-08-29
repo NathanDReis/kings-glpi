@@ -15,7 +15,8 @@ export interface BudgetClientInterface {
   name: string
   email: string
   phone: string
-  cnpj: string
+  cnpj?: string
+  cpf?: string
 }
 
 export interface BudgetProductInterface {

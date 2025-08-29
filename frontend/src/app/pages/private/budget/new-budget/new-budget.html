@@ -3,7 +3,7 @@
     <p-card class="w-full flex justify-between items-center" header="Novo orçamento">
       <ng-template #content>
         <h2 class="text-3xl font-bold text-green-600">
-          {{ budget.price | currency:'BRL' }}
+          {{ budget.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
         </h2>
       </ng-template>
 
@@ -22,11 +22,12 @@
         <div class="flex flex-col gap-6">
           <div>
             <label for="name" class="block font-bold mb-3">Nome</label>
-            <input type="text" pInputText id="name" [(ngModel)]="budget.name" required autofocus fluid />
-            @if (!budget.name || (!!budget.name && budget.name.trim().length === 0) ) {
+            <input type="text" pInputText id="name" [(ngModel)]="budget.name" placeholder="Nome do orçamento" required autofocus fluid />
+            @if (!budget.name || (!!budget.name && budget.name.trim().length === 0)) {
             <p class="text-red-500">Nome é obrigatório.</p>
             }
           </div>
+
           <div>
             <label for="description" class="block font-bold mb-3">Descrição</label>
             <textarea id="description" rows="5" cols="30" pTextarea [(ngModel)]="budget.description" class="min-h-14"
@@ -39,6 +40,7 @@
               <p-select id="status" [options]="statusSelect" [(ngModel)]="budget.status" optionLabel="label"
                 optionValue="value" placeholder="Selecione um status" fluid />
             </div>
+
             <div class="grow">
               <label for="workforce" class="block font-bold mb-3">Mão de obra</label>
               <p-inputnumber [(ngModel)]="budget.workforce" inputId="workforce" mode="currency" currency="BRL"
@@ -48,10 +50,7 @@
 
           <div>
             <label for="responsible" class="block font-bold mb-3">Responsável</label>
-            <input type="text" pInputText id="responsible" [(ngModel)]="budget.responsible" required autofocus fluid />
-            @if (!budget.responsible || (!!budget.responsible && budget.responsible.trim().length === 0) ) {
-            <p class="text-red-500">Responsável é obrigatório.</p>
-            }
+            <input type="text" pInputText id="responsible" [(ngModel)]="budget.responsible" placeholder="Responsável pelo orçamento" autofocus fluid />
           </div>
         </div>
       </ng-template>
@@ -61,7 +60,7 @@
       <div>
         <label for="product-name" class="block font-bold mb-3">Produto</label>
         <p-select id="product_name" [options]="productsSelect" optionLabel="name" optionValue="name"
-          placeholder="Selecione um produto" filter="true" filterBy="name" [loading]="loadingProducts"
+          placeholder="Selecione um produto" [loading]="loadingProducts"
           [(ngModel)]="product.name" fluid />
       </div>
 
@@ -70,15 +69,17 @@
           <label for="product_quantity" class="block font-bold mb-3">Quantidade</label>
           <p-inputnumber inputId="product_quantity" [(ngModel)]="product.quantity" (onInput)="calculateTotal()" fluid />
         </div>
+
         <div class="grow">
           <label for="product_price" class="block font-bold mb-3">Valor</label>
           <p-inputnumber inputId="product_price" [(ngModel)]="product.price" (onInput)="calculateTotal()"
             mode="currency" currency="BRL" locale="pt-BR" fluid />
         </div>
+
         <div class="grow">
           <label class="block font-bold mb-3">Total</label>
           <p class="text-2xl font-bold text-green-600">
-            {{ product.total | currency:'BRL' }}
+            {{ product.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
           </p>
         </div>
       </div>
@@ -131,12 +132,13 @@
               <th></th>
             </tr>
           </ng-template>
+
           <ng-template #body let-product>
             <tr>
               <td>{{ product.name }}</td>
               <td>{{ product.quantity }}</td>
-              <td>{{ product.price | currency:'BRL' }}</td>
-              <td>{{ product.total | currency:'BRL' }}</td>
+              <td>{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+              <td>{{ product.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
               <td class="">
                 <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
                   (click)="editProduct(product)" />
@@ -156,22 +158,61 @@
         <div class="flex items-start justify-center flex-wrap gap-6">
           <div class="grow">
             <label for="name" class="block font-bold mb-3">Nome</label>
-            <input type="text" pInputText id="name" [(ngModel)]="budget.client.name" required autofocus fluid />
-            @if (!budget.client.name || (!!budget.client.name && budget.client.name.trim().length === 0) ) {
-            <p class="text-red-500">Nome é obrigatório.</p>
+            <input type="text" pInputText id="name" [(ngModel)]="budget.client.name" placeholder="Nome do cliente" required autofocus fluid />
+            @if (!budget.client.name || (!!budget.client.name && budget.client.name.trim().length === 0)) {
+              <p class="text-red-500">Nome é obrigatório.</p>
             }
           </div>
-          <div class="grow">
-            <label for="cnpj" class="block font-bold mb-3">CNPJ</label>
-            <input type="text" pInputText id="cnpj" [(ngModel)]="budget.client.cnpj" autofocus fluid />
-          </div>
+
+          @if (!budget.client.cpf || budget.client.cpf.trim().length === 0) {
+            <div class="grow">
+              <label for="cnpj" class="block font-bold mb-3">CNPJ</label>
+              <p-inputmask 
+                mask="99.999.999/9999-99" 
+                [(ngModel)]="budget.client.cnpj" 
+                placeholder="99.999.999/9999-99" 
+                fluid
+              />
+              @if (formInvalidCPFCNPJ()) {
+                <p class="text-red-500">CNPJ ou CPF é obrigatório.</p>
+              }
+            </div>
+          }
+
+          @if (!budget.client.cnpj || budget.client.cnpj.trim().length === 0) {
+            <div class="grow">
+              <label for="cpf" class="block font-bold mb-3">CPF</label>
+              <p-inputmask 
+                mask="999.999.999-99" 
+                [(ngModel)]="budget.client.cpf" 
+                placeholder="999.999.999-99" 
+                fluid
+              />
+              @if (formInvalidCPFCNPJ()) {
+                <p class="text-red-500">CPF ou CNPJ é obrigatório.</p>
+              }
+            </div>
+          }
+
           <div class="grow">
             <label for="email" class="block font-bold mb-3">E-mail</label>
-            <input type="email" pInputText id="email" [(ngModel)]="budget.client.email" autofocus fluid />
+            <input type="email" pInputText id="email" [(ngModel)]="budget.client.email" placeholder="E-mail do cliente" required autofocus fluid />
+            @if (!budget.client.email || (!!budget.client.email && budget.client.email.trim().length === 0)) {
+              <p class="text-red-500">E-mail é obrigatório.</p>
+            }
           </div>
+
           <div class="grow">
-            <label for="phone" class="block font-bold mb-3">Telefone</label>
-            <input type="text" pInputText id="phone" [(ngModel)]="budget.client.phone" autofocus fluid />
+            <label for="phone" class="block font-bold mb-3">Celular</label>
+            <p-inputmask 
+              mask="(99) 99999-9999" 
+              [(ngModel)]="budget.client.phone" 
+              placeholder="(99) 99999-9999" 
+              fluid
+            />
+            @if (!budget.client.phone || (!!budget.client.phone && budget.client.phone.trim().length === 0)) {
+              <p class="text-red-500">Celular é obrigatório.</p>
+            }
           </div>
         </div>
       </ng-template>
