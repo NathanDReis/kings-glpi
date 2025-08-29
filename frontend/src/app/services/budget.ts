@@ -5,6 +5,7 @@ import {
   CollectionReference, 
   doc, 
   DocumentData, 
+  documentId, 
   DocumentReference, 
   Firestore, 
   getDocs, 
@@ -57,6 +58,26 @@ export class BudgetService {
         } as BudgetInterface);
       });
       return budgets;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // READ - Buscar orçamento por ID
+  async findById(id: string): Promise<BudgetInterface | null> {
+    try {    
+      const q = query(
+        this.budgetsCollection,
+        where(documentId(), '==', id),
+        where('deletedAt', '==', null)
+      );  
+      const docSnapshot = await getDocs(q);
+      if (docSnapshot.empty) return null;
+
+      console.log(docSnapshot.docs[0].data());
+
+      const data = docSnapshot.docs[0].data();
+      return { id: docSnapshot.docs[0].id, ...data } as BudgetInterface;
     } catch (error) {
       throw error;
     }

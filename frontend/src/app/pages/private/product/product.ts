@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { Timestamp } from '@angular/fire/firestore';
 
 import { ConfirmationService } from 'primeng/api';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { Dialog } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -19,18 +19,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { Table } from 'primeng/table';
 
 import { ProductInterface } from '../../../interfaces/product';
 import { ProductService } from '../../../services/product';
 import { ToastService } from '../../../services/toast';
 import { LoadingService } from '../../../services/loading';
-
-interface Column {
-    field: string;
-    header: string;
-    customExportHeader?: string;
-}
+import { Column } from '../../../interfaces/table';
 
 @Component({
   selector: 'app-product',
@@ -69,7 +63,6 @@ export class ProductComponent implements OnInit{
     @ViewChild('dt') dt!: Table;
 
     cols: Column[] = [
-        { field: 'id', header: 'Código' },
         { field: 'name', header: 'Nome' },
         { field: 'brand', header: 'Marca' },
         { field: 'model', header: 'Modelo' },
@@ -172,10 +165,11 @@ export class ProductComponent implements OnInit{
 
     async saveProduct(): Promise<void> {
         try {
-            this.loading.run();
-            this.submitted = true;
-    
             if (!this.product?.name.trim()) return 
+
+            this.loading.run();
+
+            this.submitted = true;
 
             const {id, ...data} = this.product; 
             
@@ -190,8 +184,9 @@ export class ProductComponent implements OnInit{
             this.productDialog = false;
             this.loadData();
         } catch (error) {
-            this.loading.stop();
             this.toast.show(`Não foi possível ${this.product?.id ? 'atualizar' : 'criar'} produto`, 'error', 5000);
+        } finally {
+            this.loading.stop();
         }
     }
 

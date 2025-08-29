@@ -13,13 +13,12 @@
         [columns]="cols"
         [paginator]="true"
         [globalFilterFields]="['name']"
-        [tableStyle]="{ 'min-width': '75rem' }"
         [(selection)]="selectedProducts"
         [rowHover]="true"
         dataKey="id"
         currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} resultados"
         [showCurrentPageReport]="true"
-        [size]="'small'"
+        size="small"
     >
         <ng-template #caption>
             <div class="flex items-center justify-between">
@@ -35,17 +34,10 @@
                 <th style="width: 3rem">
                     <p-tableHeaderCheckbox />
                 </th>
-                <!-- <th>Código</th> -->
                 <th pSortableColumn="name">
                     <div class="flex items-center gap-2">
                         Nome
                         <p-sortIcon field="name" />
-                    </div>
-                </th>
-                <th pSortableColumn="brand">
-                    <div class="flex items-center gap-2">
-                        Marca
-                        <p-sortIcon field="brand" />
                     </div>
                 </th>
                 <th pSortableColumn="model">
@@ -54,19 +46,24 @@
                         <p-sortIcon field="model" />
                     </div>
                 </th>
+                <th pSortableColumn="brand">
+                    <div class="flex items-center gap-2">
+                        Marca
+                        <p-sortIcon field="brand" />
+                    </div>
+                </th>
                 <th></th>
             </tr>
         </ng-template>
         <ng-template #body let-product>
             <tr>
-                <td style="width: 3rem">
+                <td>
                     <p-tableCheckbox [value]="product" />
                 </td>
-                <!-- <td style="min-width: 12rem">{{ product.id }}</td> -->
                 <td>{{ product.name }}</td>
-                <td>{{ product.brand }}</td>
                 <td>{{ product.model }}</td>
-                <td>
+                <td>{{ product.brand }}</td>
+                <td class="">
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editProduct(product)" />
                     <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(product)" />
                 </td>
@@ -85,12 +82,12 @@
                     }
                 </div>
                 <div>
-                    <label for="brand" class="block font-bold mb-3">Marca</label>
-                    <input type="text" pInputText id="brand" [(ngModel)]="product.brand" fluid />
-                </div>
-                <div>
                     <label for="model" class="block font-bold mb-3">Modelo</label>
                     <input type="text" pInputText id="model" [(ngModel)]="product.model" fluid />
+                </div>
+                <div>
+                    <label for="brand" class="block font-bold mb-3">Marca</label>
+                    <input type="text" pInputText id="brand" [(ngModel)]="product.brand" fluid />
                 </div>
             </div>
         </ng-template>

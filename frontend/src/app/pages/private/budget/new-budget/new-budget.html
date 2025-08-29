@@ -2,9 +2,11 @@
   <div class="flex w-full">
     <p-card class="w-full flex justify-between items-center" header="Novo orçamento">
       <ng-template #content>
-        <h2 class="text-3xl font-bold text-green-600">R$ 0,00</h2>
+        <h2 class="text-3xl font-bold text-green-600">
+          {{ budget.price | currency:'BRL' }}
+        </h2>
       </ng-template>
-      
+
       <ng-template #footer>
         <div class="flex justify-end gap-12">
           <p-button label="Cancelar" icon="pi pi-times" text (click)="hidePage()" />
@@ -22,22 +24,25 @@
             <label for="name" class="block font-bold mb-3">Nome</label>
             <input type="text" pInputText id="name" [(ngModel)]="budget.name" required autofocus fluid />
             @if (!budget.name || (!!budget.name && budget.name.trim().length === 0) ) {
-              <p class="text-red-500" >Nome é obrigatório.</p>
+            <p class="text-red-500">Nome é obrigatório.</p>
             }
           </div>
           <div>
             <label for="description" class="block font-bold mb-3">Descrição</label>
-            <textarea id="description" rows="5" cols="30" pTextarea [(ngModel)]="budget.description" class="min-h-14" fluid></textarea>
+            <textarea id="description" rows="5" cols="30" pTextarea [(ngModel)]="budget.description" class="min-h-14"
+              fluid></textarea>
           </div>
 
           <div class="flex items-center justify-between flex-wrap gap-6">
             <div class="grow">
               <label for="status" class="block font-bold mb-3">Status</label>
-              <p-select id="status" [options]="statusSelect" [(ngModel)]="budget.status" optionLabel="label" optionValue="value" placeholder="Selecione um status" class="w-full" />
+              <p-select id="status" [options]="statusSelect" [(ngModel)]="budget.status" optionLabel="label"
+                optionValue="value" placeholder="Selecione um status" fluid />
             </div>
             <div class="grow">
               <label for="workforce" class="block font-bold mb-3">Mão de obra</label>
-              <p-inputnumber [(ngModel)]="budget.workforce" inputId="workforce" mode="currency" currency="BRL" locale="pt-BR"  class="w-full" />
+              <p-inputnumber [(ngModel)]="budget.workforce" inputId="workforce" mode="currency" currency="BRL"
+                locale="pt-BR" (onInput)="calculatePriceBudget()" fluid />
             </div>
           </div>
 
@@ -45,41 +50,126 @@
             <label for="responsible" class="block font-bold mb-3">Responsável</label>
             <input type="text" pInputText id="responsible" [(ngModel)]="budget.responsible" required autofocus fluid />
             @if (!budget.responsible || (!!budget.responsible && budget.responsible.trim().length === 0) ) {
-              <p class="text-red-500" >Responsável é obrigatório.</p>
+            <p class="text-red-500">Responsável é obrigatório.</p>
             }
           </div>
         </div>
       </ng-template>
     </p-card>
-  
-    <p-card header="Produtos do orçamento" class="w-full lg:w-[65%]">
+
+    <p-card header="Produtos" class="w-full lg:w-[65%]">
       <div>
         <label for="product-name" class="block font-bold mb-3">Produto</label>
-        <p-select id="product-name" [options]="productsSelect" optionLabel="name" optionValue="id" placeholder="Selecione um produto" class="w-full" />
+        <p-select id="product_name" [options]="productsSelect" optionLabel="name" optionValue="name"
+          placeholder="Selecione um produto" filter="true" filterBy="name" [loading]="loadingProducts"
+          [(ngModel)]="product.name" fluid />
+      </div>
+
+      <div class="flex items-center justify-between flex-wrap gap-6 mt-6">
+        <div class="grow">
+          <label for="product_quantity" class="block font-bold mb-3">Quantidade</label>
+          <p-inputnumber inputId="product_quantity" [(ngModel)]="product.quantity" (onInput)="calculateTotal()" fluid />
+        </div>
+        <div class="grow">
+          <label for="product_price" class="block font-bold mb-3">Valor</label>
+          <p-inputnumber inputId="product_price" [(ngModel)]="product.price" (onInput)="calculateTotal()"
+            mode="currency" currency="BRL" locale="pt-BR" fluid />
+        </div>
+        <div class="grow">
+          <label class="block font-bold mb-3">Total</label>
+          <p class="text-2xl font-bold text-green-600">
+            {{ product.total | currency:'BRL' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <p-button label="Adicionar" icon="pi pi-check" [disabled]="formInvalidProduct()" (onClick)="addProduct()"
+          fluid />
+      </div>
+
+      <div class="mt-6">
+        <p-table 
+          #dt 
+          [value]="budget.products" 
+          [rows]="5" 
+          [columns]="cols" 
+          [paginator]="true" 
+          [globalFilterFields]="['name']"
+          [rowHover]="true" 
+          dataKey="id"
+          currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} resultados"
+          [showCurrentPageReport]="true" 
+          size="small"
+        >
+          <ng-template #header>
+            <tr>
+              <th pSortableColumn="name">
+                <div class="flex items-center gap-2">
+                  Nome
+                  <p-sortIcon field="name" />
+                </div>
+              </th>
+              <th pSortableColumn="quantity">
+                <div class="flex items-center gap-2">
+                  Quantidade
+                  <p-sortIcon field="quantity" />
+                </div>
+              </th>
+              <th pSortableColumn="price">
+                <div class="flex items-center gap-2">
+                  Preço
+                  <p-sortIcon field="price" />
+                </div>
+              </th>
+              <th pSortableColumn="total">
+                <div class="flex items-center gap-2">
+                  Total
+                  <p-sortIcon field="total" />
+                </div>
+              </th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-product>
+            <tr>
+              <td>{{ product.name }}</td>
+              <td>{{ product.quantity }}</td>
+              <td>{{ product.price | currency:'BRL' }}</td>
+              <td>{{ product.total | currency:'BRL' }}</td>
+              <td class="">
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                  (click)="editProduct(product)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                  (click)="deleteProduct(product)" />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
     </p-card>
   </div>
 
   <div class="flex w-full gap-8 mt-8">
-    <p-card header="Cliente do orçamento" class="w-full">
+    <p-card header="Cliente" class="w-full">
       <ng-template #content>
         <div class="flex items-start justify-center flex-wrap gap-6">
-          <div class="grow"> 
+          <div class="grow">
             <label for="name" class="block font-bold mb-3">Nome</label>
             <input type="text" pInputText id="name" [(ngModel)]="budget.client.name" required autofocus fluid />
             @if (!budget.client.name || (!!budget.client.name && budget.client.name.trim().length === 0) ) {
-              <p class="text-red-500" >Nome é obrigatório.</p>
+            <p class="text-red-500">Nome é obrigatório.</p>
             }
           </div>
-          <div class="grow"> 
+          <div class="grow">
             <label for="cnpj" class="block font-bold mb-3">CNPJ</label>
             <input type="text" pInputText id="cnpj" [(ngModel)]="budget.client.cnpj" autofocus fluid />
           </div>
-          <div class="grow"> 
+          <div class="grow">
             <label for="email" class="block font-bold mb-3">E-mail</label>
             <input type="email" pInputText id="email" [(ngModel)]="budget.client.email" autofocus fluid />
           </div>
-          <div class="grow"> 
+          <div class="grow">
             <label for="phone" class="block font-bold mb-3">Telefone</label>
             <input type="text" pInputText id="phone" [(ngModel)]="budget.client.phone" autofocus fluid />
           </div>

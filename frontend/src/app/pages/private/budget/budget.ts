@@ -41,7 +41,6 @@ interface Column {
   selector: 'app-budget',
   imports: [
     TableModule,
-    Dialog,
     ToolbarModule,
     ConfirmDialog,
     InputTextModule,
@@ -55,46 +54,28 @@ interface Column {
     StepperModule,
     IconField,
     InputIcon,
-    InputNumber,
   ],
   providers: [ConfirmationService],
   templateUrl: './budget.html',
   styleUrl: './budget.css'
 })
 export class BudgetComponent implements OnInit {
-    budgetDialog: boolean = false;
-    actionDialog: string = 'Criar Orçamento';
-    activeStep: number = 1
-
-    budgets!: BudgetInterface[];
-    budget: BudgetInterface = {
-        id: '',
-        name: '',
-        status: 'pending',
-        price: 0,
-        responsible: '',
-        client: {
-            name: '',
-            email: '',
-            phone: '',
-            cnpj: ''
-        },
-        products: [],
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
-    };
+    budgets: BudgetInterface[] = [];
     selectedBudgets!: BudgetInterface[] | null;
-    submitted: boolean = false;
-
     @ViewChild('dt') dt!: Table;
 
     cols: Column[] = [
-        { field: 'id', header: 'Código' },
         { field: 'name', header: 'Nome' },
         { field: 'status', header: 'Status' },
         { field: 'price', header: 'Preço' },
         { field: 'responsible', header: 'Responsável' },
     ];
+
+    statusMap: { [key: string]: string } = {
+        pending: 'Pendente',
+        approved: 'Aprovado',
+        rejected: 'Rejeitado'
+    };
 
     private router = inject(Router);
     private budgetService = inject(BudgetService);
@@ -110,24 +91,7 @@ export class BudgetComponent implements OnInit {
     async loadData(): Promise<void> {
         try {
             this.loading.run();
-            const data = await this.budgetService.findAll();
-            this.budgets = data;
-            this.budget = {
-                id: '',
-                name: '',
-                status: 'pending',
-                price: 0,
-                responsible: '',
-                client: {
-                    name: '',
-                    email: '',
-                    phone: '',
-                    cnpj: ''
-                },
-                products: [],
-                createdAt: Timestamp.now(),
-                updatedAt: Timestamp.now()
-            };
+            this.budgets = await this.budgetService.findAll();
             this.cd.markForCheck();
         } catch (error) {
             this.toast.show('Não foi possível buscar orçamentos', 'error', 5000);
@@ -206,6 +170,6 @@ export class BudgetComponent implements OnInit {
     }
 
     editBudget(budget: BudgetInterface) {
-        
+        this.router.navigate([`/orcamento-editar/${budget.id!}`]);
     }
 }

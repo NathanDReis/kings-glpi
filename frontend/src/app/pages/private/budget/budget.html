@@ -13,7 +13,6 @@
         [columns]="cols"
         [paginator]="true"
         [globalFilterFields]="['name', 'responsible', 'client.name']"
-        [tableStyle]="{ 'min-width': '75rem' }"
         [(selection)]="selectedBudgets"
         [rowHover]="true"
         dataKey="id"
@@ -31,10 +30,9 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th style="width: 3rem">
+                <th>
                     <p-tableHeaderCheckbox />
                 </th>
-                <th>Código</th>
                 <th pSortableColumn="name">
                     <div class="flex items-center gap-2">
                         Nome
@@ -65,7 +63,7 @@
                         <p-sortIcon field="client.name" />
                     </div>
                 </th>
-                <th style="min-width: 10rem"></th>
+                <th></th>
             </tr>
         </ng-template>
         <ng-template #body let-budget>
@@ -73,12 +71,11 @@
                 <td style="width: 3rem">
                     <p-tableCheckbox [value]="budget" />
                 </td>
-                <td style="min-width: 12rem">{{ budget.id }}</td>
-                <td style="min-width: 16rem">{{ budget.name }}</td>
-                <td style="min-width: 10rem">{{ budget.status }}</td>
-                <td style="min-width: 10rem">{{ budget.price | currency:'BRL':'symbol':'1.2-2' }}</td>
-                <td style="min-width: 16rem">{{ budget.responsible }}</td>
-                <td style="min-width: 16rem">{{ budget.client?.name }}</td>
+                <td>{{ budget.name }}</td>
+                <td>{{ statusMap[budget.status] }}</td>
+                <td>{{ budget.price | currency:'BRL' }}</td>
+                <td>{{ budget.responsible }}</td>
+                <td>{{ budget.client?.name }}</td>
                 <td>
                     <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editBudget(budget)" />
                     <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteBudget(budget)" />

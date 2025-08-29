@@ -29,6 +29,7 @@ export const routes: Routes = [
       { path: 'produto', component: ProductComponent },
       { path: 'orcamento', component: BudgetComponent },
       { path: 'orcamento-criar', component: NewBudgetComponent },
+      { path: 'orcamento-editar/:id', component: NewBudgetComponent },
       { path: 'configuracoes', component: ConfigComponent },
       { path: '**', redirectTo: '/painel' },
     ]
