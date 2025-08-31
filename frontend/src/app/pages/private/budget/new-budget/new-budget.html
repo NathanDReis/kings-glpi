@@ -34,18 +34,15 @@
               fluid></textarea>
           </div>
 
-          <div class="flex items-center justify-between flex-wrap gap-6">
-            <div class="grow">
-              <label for="status" class="block font-bold mb-3">Status</label>
-              <p-select id="status" [options]="statusSelect" [(ngModel)]="budget.status" optionLabel="label"
-                optionValue="value" placeholder="Selecione um status" fluid />
-            </div>
+          <div class="grow">
+            <label for="status" class="block font-bold mb-3">Status</label>
+            <p-select id="status" [options]="statusSelect" [(ngModel)]="budget.status" optionLabel="label"
+              optionValue="value" placeholder="Selecione um status" fluid />
+          </div>
 
-            <div class="grow">
-              <label for="workforce" class="block font-bold mb-3">Mão de obra</label>
-              <p-inputnumber [(ngModel)]="budget.workforce" inputId="workforce" mode="currency" currency="BRL"
-                locale="pt-BR" (onInput)="calculatePriceBudget()" fluid />
-            </div>
+          <div>
+            <label for="deliveryExpected" class="block font-bold mb-3">Previsão de entrega</label>
+            <p-datepicker dateFormat="dd/mm/yy" id="deliveryExpected" [(ngModel)]="budget.deliveryExpected" placeholder="DD/MM/AAAA" fluid />
           </div>
 
           <div>
@@ -67,12 +64,12 @@
       <div class="flex items-center justify-between flex-wrap gap-6 mt-6">
         <div class="grow">
           <label for="product_quantity" class="block font-bold mb-3">Quantidade</label>
-          <p-inputnumber inputId="product_quantity" [(ngModel)]="product.quantity" (onInput)="calculateTotal()" fluid />
+          <p-inputnumber inputId="product_quantity" [(ngModel)]="product.quantity" (onInput)="calculateTotalProduct()" fluid />
         </div>
 
         <div class="grow">
           <label for="product_price" class="block font-bold mb-3">Valor</label>
-          <p-inputnumber inputId="product_price" [(ngModel)]="product.price" (onInput)="calculateTotal()"
+          <p-inputnumber inputId="product_price" [(ngModel)]="product.price" (onInput)="calculateTotalProduct()"
             mode="currency" currency="BRL" locale="pt-BR" fluid />
         </div>
 
@@ -152,6 +149,100 @@
     </p-card>
   </div>
 
+  <div class="mt-8">
+    <p-card header="Serviços">
+        <div>
+          <label for="service_name" class="block font-bold mb-3">Serviço</label>
+            <input type="text" pInputText id="service_name" [(ngModel)]="service.name" placeholder="Nome do serviço" autofocus fluid />
+        </div>
+  
+        <div class="flex items-center justify-between flex-wrap gap-6 mt-6">
+          <div class="grow">
+            <label for="service_quantity" class="block font-bold mb-3">Quantidade</label>
+            <p-inputnumber inputId="service_quantity" [(ngModel)]="service.quantity" (onInput)="calculateTotalService()" fluid />
+          </div>
+  
+          <div class="grow">
+            <label for="service_price" class="block font-bold mb-3">Valor</label>
+            <p-inputnumber inputId="service_price" [(ngModel)]="service.price" (onInput)="calculateTotalService()"
+              mode="currency" currency="BRL" locale="pt-BR" fluid />
+          </div>
+  
+          <div class="grow">
+            <label class="block font-bold mb-3">Total</label>
+            <p class="text-2xl font-bold text-green-600">
+              {{ service.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </p>
+          </div>
+        </div>
+  
+        <div class="mt-6">
+          <p-button label="Adicionar" icon="pi pi-check" [disabled]="formInvalidService()" (onClick)="addService()"
+            fluid />
+        </div>
+  
+        <div class="mt-6">
+          <p-table 
+            #dt 
+            [value]="budget.services" 
+            [rows]="5" 
+            [columns]="cols" 
+            [paginator]="true" 
+            [rowHover]="true" 
+            dataKey="id"
+            currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} resultados"
+            [showCurrentPageReport]="true" 
+            size="small"
+          >
+            <ng-template #header>
+              <tr>
+                <th pSortableColumn="name">
+                  <div class="flex items-center gap-2">
+                    Nome
+                    <p-sortIcon field="name" />
+                  </div>
+                </th>
+                <th pSortableColumn="quantity">
+                  <div class="flex items-center gap-2">
+                    Quantidade
+                    <p-sortIcon field="quantity" />
+                  </div>
+                </th>
+                <th pSortableColumn="price">
+                  <div class="flex items-center gap-2">
+                    Preço
+                    <p-sortIcon field="price" />
+                  </div>
+                </th>
+                <th pSortableColumn="total">
+                  <div class="flex items-center gap-2">
+                    Total
+                    <p-sortIcon field="total" />
+                  </div>
+                </th>
+                <th></th>
+              </tr>
+            </ng-template>
+  
+            <ng-template #body let-service>
+              <tr>
+                <td>{{ service.name }}</td>
+                <td>{{ service.quantity }}</td>
+                <td>{{ service.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+                <td>{{ service.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+                <td class="">
+                  <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                    (click)="editService(service)" />
+                  <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                    (click)="deleteService(service)" />
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+    </p-card>
+  </div>
+
   <div class="flex w-full gap-8 mt-8">
     <p-card header="Cliente" class="w-full">
       <ng-template #content>
@@ -213,6 +304,33 @@
             @if (!budget.client.phone || (!!budget.client.phone && budget.client.phone.trim().length === 0)) {
               <p class="text-red-500">Celular é obrigatório.</p>
             }
+          </div>
+
+          <div class="grow">
+            <label for="cep" class="block font-bold mb-3">CEP</label>
+            <p-inputmask 
+              id="cep"
+              mask="99.999-999" 
+              [(ngModel)]="budget.client.cep" 
+              placeholder="99.999-999" 
+              fluid
+              (onComplete)="getAddressByCEP()"
+            />
+          </div>
+
+          <div class="grow">
+            <label for="address" class="block font-bold mb-3">Endereço</label>
+            <input type="text" pInputText id="address" [(ngModel)]="budget.client.address" placeholder="Endereço do cliente" autofocus fluid />
+          </div>
+
+          <div class="grow">
+            <label for="city" class="block font-bold mb-3">Cidade</label>
+            <input type="text" pInputText id="city" [(ngModel)]="budget.client.city" placeholder="Cidade do cliente" autofocus fluid />
+          </div>
+
+          <div class="grow">
+            <label for="state" class="block font-bold mb-3">Estado</label>
+            <input type="text" pInputText id="state" [(ngModel)]="budget.client.state" placeholder="Estado do cliente" autofocus fluid />
           </div>
         </div>
       </ng-template>

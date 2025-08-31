@@ -4,11 +4,12 @@ export interface BudgetInterface extends SoftBaseInterface {
   name: string
   description?: string 
   status: 'pending' | 'approved' | 'rejected'
-  workforce?: number
   price: number
   responsible: string
   client: BudgetClientInterface
   products: BudgetProductInterface[]
+  services: BudgetServiceInterface[]
+  deliveryExpected?: Date | string
 }
 
 export interface BudgetClientInterface {
@@ -16,10 +17,23 @@ export interface BudgetClientInterface {
   email: string
   phone: string
   cnpj?: string
-  cpf?: string
+  cpf?: string,
+
+  cep?: string
+  state?: string
+  address?: string
+  city?: string
 }
 
 export interface BudgetProductInterface {
+  id?: number
+  name: string
+  quantity: number
+  price: number
+  total: number
+}
+
+export interface BudgetServiceInterface {
   id?: number
   name: string
   quantity: number

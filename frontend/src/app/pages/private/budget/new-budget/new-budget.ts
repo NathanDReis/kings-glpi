@@ -11,8 +11,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { InputMaskModule } from 'primeng/inputmask';
+import { DatePickerModule } from 'primeng/datepicker';
 
-import { BudgetInterface, BudgetProductInterface } from '../../../../interfaces/budget';
+import { BudgetInterface, BudgetProductInterface, BudgetServiceInterface } from '../../../../interfaces/budget';
 import { ProductService } from '../../../../services/product';
 import { LoadingService } from '../../../../services/loading';
 import { ProductInterface } from '../../../../interfaces/product';
@@ -37,6 +38,7 @@ registerLocaleData(localePt);
     CurrencyPipe,
     TableModule,
     InputMaskModule,
+    DatePickerModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt-BR' }
@@ -57,7 +59,6 @@ export class NewBudgetComponent implements OnInit {
     name: '',
     description: '' ,
     status: 'pending',
-    workforce: 0,
     price: 0,
     responsible: '',
     client: {
@@ -66,6 +67,7 @@ export class NewBudgetComponent implements OnInit {
       phone: '',
     },
     products: [],
+    services: [],
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
   };
@@ -94,6 +96,15 @@ export class NewBudgetComponent implements OnInit {
     total: 0
   };
 
+  service: BudgetServiceInterface = {
+    name: '',
+    quantity: 1,
+    price: 0,
+    total: 0
+  };
+
+  idProductCounter: number = 1;
+  idServiceCounter: number = 1;
   ngOnInit(): void {
     this.loadProducts();
 
@@ -114,8 +125,17 @@ export class NewBudgetComponent implements OnInit {
         this.removeProductSelect(p);
         return { id: index + 1, ...p };
       });
+      this.idProductCounter = budget.products.length + 1;
 
-      this.budget = budget;
+      if (budget.services) {
+        budget.services = budget.services.map((s, index) => {
+          this.removeProductSelect(s);
+          return { id: index + 1, ...s };
+        });
+
+        this.idServiceCounter = budget.services.length + 1;
+      }
+      this.budget = {...this.budget, ...budget};
       this.calculatePriceBudget();
       this.cd.markForCheck();
       this.product = {
@@ -151,7 +171,6 @@ export class NewBudgetComponent implements OnInit {
     }
   }
 
-  idProductCounter: number = 1;
   addProduct(): void {
     if (this.formInvalidProduct()) return;
 
@@ -169,14 +188,40 @@ export class NewBudgetComponent implements OnInit {
     };
   }
 
+  addService(): void {
+    if (this.formInvalidService()) return;
+
+    this.service.id = this.idServiceCounter++;
+
+    this.budget.services = [...this.budget.services, { ...this.service }];
+    this.calculatePriceBudget();
+    this.cd.markForCheck();
+    this.service = {
+      name: '',
+      quantity: 1,
+      price: 0,
+      total: 0
+    };
+  }
+
   editProduct(product: BudgetProductInterface): void {
     this.product = { ...product };
     this.deleteProduct(product);
   }
 
+  editService(service: BudgetServiceInterface): void {
+    this.service = { ...service };
+    this.deleteService(service);
+  }
+
   deleteProduct(product: BudgetProductInterface): void {
     this.budget.products = this.budget.products.filter(p => p.id !== product.id);
     this.addProductSelect(product);
+    this.calculatePriceBudget();
+  }
+
+  deleteService(service: BudgetServiceInterface): void {
+    this.budget.services = this.budget.services.filter(p => p.id !== service.id);
     this.calculatePriceBudget();
   }
 
@@ -186,19 +231,27 @@ export class NewBudgetComponent implements OnInit {
   }
 
   removeProductSelect(product: BudgetProductInterface): void {
-    this.productsSelect = this.productsSelectCache.filter(p => p.name !== product.name);
+    this.productsSelect = this.productsSelect.filter(p => p.name !== product.name);
     this.productsSelect.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  calculateTotal(): void {
+  calculateTotalProduct(): void {
     this.product.total = (this.product.quantity ?? 0) * (this.product.price ?? 0);
+  }
+  calculateTotalService(): void {
+    this.service.total = (this.service.quantity ?? 0) * (this.service.price ?? 0);
   }
 
   calculatePriceBudget(): void {
-    let total = this.budget.workforce ?? 0;
+    let total = 0;
     this.budget.products.forEach(p => {
       total += p.total;
     });
+    if (this.budget.services) {
+      this.budget.services.forEach(s => {
+        total += s.total;
+      });
+    }
     this.budget.price = total;
   }
 
@@ -232,6 +285,14 @@ export class NewBudgetComponent implements OnInit {
     );
   }
 
+  formInvalidService(): boolean {
+    return (
+      !this.service.name.trim() ||
+      !(this.service.quantity > 0) ||
+      !(this.service.price > 0)
+    );
+  }
+
   hidePage(): void {
     this.router.navigate(['/orcamento']);
   }
@@ -244,10 +305,28 @@ export class NewBudgetComponent implements OnInit {
       return p;
     });
 
+    if (this.budget.services) {
+      this.budget.services = this.budget.services.map(s => {
+        delete s.id;
+        return s;
+      });
+    }
+
     try {
       if (this.formInvalid()) return 
 
       this.loading.run();
+
+      if (this.budget.deliveryExpected) {
+        const date = new Date(this.budget.deliveryExpected);
+        const valueNum = (num: number) => {
+          return num < 10 ? `0${num}` : `${num}`;
+        };
+        this.budget.deliveryExpected = `${valueNum(date.getDate())}/${valueNum(date.getMonth() + 1)}/${valueNum(date.getFullYear())}`;
+        if (this.budget.deliveryExpected.includes('NaN')) {
+          this.budget.deliveryExpected = '';
+        }
+      }
 
       const {id, ...data} = this.budget; 
       
@@ -263,6 +342,32 @@ export class NewBudgetComponent implements OnInit {
     } catch (error) {
       this.toast.show(`Não foi possível ${this.budget?.id ? 'atualizar' : 'criar'} orçamento`, 'error', 5000);
     } finally { 
+      this.loading.stop();
+    }
+  }
+
+  async getAddressByCEP(): Promise<void> {
+    if (!this.budget.client.cep || this.budget.client.cep.replace(/\D/g, '').length !== 8) return;
+
+    try {
+      this.loading.run();
+      const cep = this.budget.client.cep.replace(/\D/g, '');
+      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const data = await res.json();
+
+      if (data.erro) {
+        this.toast.show('CEP não encontrado', 'error', 5000);
+        return;
+      }
+
+      this.budget.client.address = data.logradouro;
+      this.budget.client.city = data.localidade;
+      this.budget.client.state = data.uf;
+
+      this.cd.markForCheck();
+    } catch (error) {
+      this.toast.show('Não foi possível buscar o endereço pelo CEP', 'error', 5000);
+    } finally {
       this.loading.stop();
     }
   }

@@ -1,116 +1,136 @@
-<div id="content" #content>
-
-  <header>
-    <img src="header.png" id="bg-header">
-    <img src="logo.png" id="logo">
-  </header>
-
-  <main>
-    <div class="flex justify-between mb-10 text-[#003477]">
-      <h1 class="font-extrabold text-2xl">ORÇAMENTO</h1>
-
-      <div class="box">
-        <p>DATA:</p>
-        <span class="date">
-          {{ date }}
-        </span>
+<div id="content" class="w-full h-full bg-white p-8 font-sans">
+  <!-- Header -->
+  <div class="flex justify-between items-start mb-8">
+    <div class="flex items-center">
+      <img src="logo.png" class="h-12 mr-2" alt="MLK tecnologia Logo" />
+      <span class="text-2xl font-bold text-blue-900">MLK</span>
+      <span class="text-2xl font-bold text-[#9dff6f]">tecnologia</span>
+    </div>
+    <div class="text-right">
+      <div class="bg-gray-200 px-4 py-2 text-center">
+        <div class="font-semibold">ORÇAMENTO {{ budget?.id || '50' }}</div>
+        <div class="text-sm">{{ date }}</div>
       </div>
     </div>
+  </div>
 
-    <div class="grid gap-1.5">
-      <div class="box">
-        <p>Cliente:</p>
+  <!-- Notice Text -->
+  <div class="text-xs text-gray-600 mb-6">
+    Este orçamento é válido por 30 dias a partir da data de emissão.
+  </div>
 
-        <span class="under">
-          {{ budget ? budget.client.name : '' }}
-        </span>
-      </div>
+  <!-- Delivery Forecast -->
+  <div class="bg-gray-100 px-4 py-2 mb-6">
+    <span class="font-semibold text-sm">PREVISÃO DE ENTREGA: {{ budget?.deliveryExpected ?? '' }}</span>
+  </div>
 
-      <div class="box">
-        <p>{{ budget ? budget.client.cnpj ? 'CNPJ' : 'CPF' : 'CNPJ' }}:</p>
+  <!-- Client Data -->
+  <div class="bg-gray-100 px-4 py-2 mb-4">
+    <span class="font-semibold text-sm">DADOS DO CLIENTE</span>
+  </div>
 
-        <span class="under">
-            {{ budget ? budget.client.cnpj ? budget.client.cnpj : budget.client.cpf : '' }}
-        </span>
-      </div>
-
-      <div class="box">
-        <p>Celular:</p>
-
-        <span class="under">
-            {{ budget ? budget.client.phone : '' }}
-        </span>
-      </div>
-
-      <div class="box">
-        <p>Email:</p>
-
-        <span class="under">
-            {{ budget ? budget.client.email : '' }}
-        </span>
-      </div>
+  <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+    <div class="flex">
+      <span class="font-medium w-20">Cliente:</span>
+      <span>{{ budget?.client?.name || 'João Pereira' }}</span>
     </div>
-
-    <div class="mt-24">
-      <p-table 
-        #dt 
-        [value]="budget ? budget.products : []" 
-        [columns]="cols" 
-        [rowHover]="true" 
-        dataKey="id"
-        size="small"
-      >
-        <ng-template #header>
-          <tr>
-            <th pSortableColumn="name">
-              <div class="flex items-center gap-2">
-                Nome
-              </div>
-            </th>
-            <th pSortableColumn="quantity">
-              <div class="flex items-center gap-2">
-                Quantidade
-              </div>
-            </th>
-            <th pSortableColumn="price">
-              <div class="flex items-center gap-2">
-                Preço
-              </div>
-            </th>
-            <th pSortableColumn="total">
-              <div class="flex items-center gap-2">
-                Total
-              </div>
-            </th>
-          </tr>
-        </ng-template>
-  
-        <ng-template #body let-product>
-          <tr>
-            <td>{{ product.name }}</td>
-            <td>{{ product.quantity }}</td>
-            <td>{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-            <td>{{ product.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="footer" #footer>
-          <tr class="font-bold">
-            <td colspan="3">Mão de Obra</td>
-            <td>{{ (budget ? budget.workforce ?? 0 : 0) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-          </tr>
-          <tr class="font-bold">
-            <td colspan="3">Total</td>
-            <td>{{ budget?.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
+    <div class="flex">
+      <span class="font-medium w-20">CNPJ/CPF:</span>
+      <span>{{ budget?.client?.cnpj || budget?.client?.cpf || '' }}</span>
     </div>
-
-    <div id="footer-contact" class="mt-24 text-center text-[#003477]">
-      <p>(31) 9250-2904 | vendas@mlktecnologia.com.br</p>
-      <p>52.790.639/0001-11 | R. Walter Adriano Macedo, 101, Minas Gerais, Sete Lagoas, Brasil, 35703-262</p>
-      <p class="font-bold">Validade do orçamento: 30 dias</p>
+    <div class="flex">
+      <span class="font-medium w-20">Endereço:</span>
+      <span>{{ budget?.client?.address || '' }}</span>
     </div>
-  </main>
+    <div class="flex">
+      <span class="font-medium w-20">CEP:</span>
+      <span>{{ budget?.client?.cep || '' }}</span>
+    </div>
+    <div class="flex">
+      <span class="font-medium w-20">Cidade:</span>
+      <span>{{ budget?.client?.city || '' }}</span>
+    </div>
+    <div class="flex">
+      <span class="font-medium w-20">Estado:</span>
+      <span>{{ budget?.client?.state || '' }}</span>
+    </div>
+    <div class="flex">
+      <span class="font-medium w-20">Telefone:</span>
+      <span>{{ budget?.client?.phone || '' }}</span>
+    </div>
+    <div class="flex">
+      <span class="font-medium w-20">E-mail:</span>
+      <span>{{ budget?.client?.email || '' }}</span>
+    </div>
+  </div>
+
+  <!-- Products -->
+  <div class="bg-gray-100 px-4 py-2 mb-2">
+    <span class="font-semibold text-sm">PRODUTOS</span>
+  </div>
+
+  <p-table [value]="budget?.products || []" class="mb-4">
+    <ng-template pTemplate="header">
+      <tr class="bg-gray-50">
+        <th class="text-left p-2 text-xs font-semibold border-b">ITEM</th>
+        <th class="text-left p-2 text-xs font-semibold border-b">NOME</th>
+        <th class="text-center p-2 text-xs font-semibold border-b">QTD.</th>
+        <th class="text-center p-2 text-xs font-semibold border-b">VR. UNIT.</th>
+        <th class="text-center p-2 text-xs font-semibold border-b">SUB TOTAL</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product let-i="rowIndex">
+      <tr class="border-b">
+        <td class="p-2 text-xs">{{ i + 1 }}</td>
+        <td class="p-2 text-xs">{{ product.name }}</td>
+        <td class="p-2 text-xs text-center">{{ product.quantity }}</td>
+        <td class="p-2 text-xs text-center">{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+        <td class="p-2 text-xs text-center">{{ product.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <div class="text-right mb-6">
+    <span class="font-semibold text-sm">TOTAL: {{ getProductsTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+  </div>
+
+  <!-- Serviços -->
+  <div class="bg-gray-100 px-4 py-2 mb-2">
+    <span class="font-semibold text-sm">SERVIÇOS</span>
+  </div>
+
+  <p-table [value]="budget?.services || []" class="mb-4">
+    <ng-template pTemplate="header">
+      <tr class="bg-gray-50">
+        <th class="text-left p-2 text-xs font-semibold border-b">ITEM</th>
+        <th class="text-left p-2 text-xs font-semibold border-b">NOME</th>
+        <th class="text-center p-2 text-xs font-semibold border-b">QTD.</th>
+        <th class="text-center p-2 text-xs font-semibold border-b">VR. UNIT.</th>
+        <th class="text-center p-2 text-xs font-semibold border-b">SUB TOTAL</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-service let-i="rowIndex">
+      <tr class="border-b">
+        <td class="p-2 text-xs">{{ i + 1 }}</td>
+        <td class="p-2 text-xs">{{ service.name }}</td>
+        <td class="p-2 text-xs text-center">{{ service.quantity }}</td>
+        <td class="p-2 text-xs text-center">{{ service.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+        <td class="p-2 text-xs text-center">{{ service.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <div class="text-right mb-6">
+    <span class="font-semibold text-sm">TOTAL: {{ getServicesTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+  </div>
+
+  <div class="text-right mb-6">
+    <span class="font-semibold text-sm">TOTAL DO ORÇAMENTO: {{ budget?.price| currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+  </div>
+
+  <!-- Signature -->
+  <div class="mt-16">
+    <div class="border-t border-black w-80 mx-auto"></div>
+    <div class="text-center text-sm mt-2">Assinatura do Cliente</div>
+  </div>
 </div>

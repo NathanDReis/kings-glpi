@@ -205,57 +205,58 @@ export class BudgetComponent implements OnInit {
 
     async download(budget: BudgetInterface): Promise<void> {
         const html = document.querySelector('#content');
-        this.loading.run();
+        // this.loading.run();
 
-        const maxProductsPerPage = 7;
-        const pages = Math.ceil(budget.products!.length / maxProductsPerPage);
-        const resultPages: BudgetInterface[] = [];
+        // const maxProductsPerPage = 7;
+        // const pages = Math.ceil(budget.products!.length / maxProductsPerPage);
+        // const resultPages: BudgetInterface[] = [];
 
-        if (pages > 1) {
-            for (let i = 0; i < pages; i++) {
-                const start = i * maxProductsPerPage;
-                const end = start + maxProductsPerPage;
-                const budgetPage: BudgetInterface = {
-                    ...budget,
-                    products: budget.products!.slice(start, end)
-                };
-                resultPages.push(budgetPage);
-            }
-        }
+        // if (pages > 1) {
+        //     for (let i = 0; i < pages; i++) {
+        //         const start = i * maxProductsPerPage;
+        //         const end = start + maxProductsPerPage;
+        //         const budgetPage: BudgetInterface = {
+        //             ...budget,
+        //             products: budget.products!.slice(start, end)
+        //         };
+        //         resultPages.push(budgetPage);
+        //     }
+        // }
 
-        this.budgetSelected = pages <= 1 ? [budget] : resultPages;
+        // this.budgetSelected = pages <= 1 ? [budget] : resultPages;
+        this.budgetSelected = [budget];
         html?.classList.remove("hidden");
 
-        try {
-            await new Promise(resolve => setTimeout(resolve, 500));
+        // try {
+        //     await new Promise(resolve => setTimeout(resolve, 500));
 
-            const pdf = new jsPDF("p", "mm", "a4");
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
+        //     const pdf = new jsPDF("p", "mm", "a4");
+        //     const pdfWidth = pdf.internal.pageSize.getWidth();
+        //     const pdfHeight = pdf.internal.pageSize.getHeight();
 
-            // captura cada template separadamente
-            const templates = html!.querySelectorAll("template-pdf");
+        //     // captura cada template separadamente
+        //     const templates = html!.querySelectorAll("template-pdf");
 
-            for (let i = 0; i < templates.length; i++) {
-                const el = templates[i] as HTMLElement;
+        //     for (let i = 0; i < templates.length; i++) {
+        //         const el = templates[i] as HTMLElement;
 
-                const canvas = await html2canvas(el, {
-                    scale: 4,
-                    width: 794,
-                    height: 1123
-                });
-                const imgData = canvas.toDataURL("image/png");
+        //         const canvas = await html2canvas(el, {
+        //             scale: 4,
+        //             width: 794,
+        //             height: 1123
+        //         });
+        //         const imgData = canvas.toDataURL("image/png");
 
-                if (i > 0) pdf.addPage();
-                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-            }
+        //         if (i > 0) pdf.addPage();
+        //         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        //     }
 
-            pdf.save(`${budget.name}.pdf`);
-        } catch (error) {
-            this.toast.show("Erro no download", 'error', 5000);
-        } finally {
-            html?.classList.add("hidden");
-            this.loading.stop();
-        }
+        //     pdf.save(`${budget.name}.pdf`);
+        // } catch (error) {
+        //     this.toast.show("Erro no download", 'error', 5000);
+        // } finally {
+        //     html?.classList.add("hidden");
+        //     this.loading.stop();
+        // }
     }
 }
