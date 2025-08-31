@@ -1,10 +1,11 @@
 /* Exemplo de CSS para o template-pdf */
 #content {
-  width: 595px;
-  height: 840px;
-  background-color: #FFF;
+  width: 794px;
+  height: 1123px;
+  background-color: #ffffff;
 
   overflow: hidden;
+  position: relative;
 }
 
 header {
@@ -28,8 +29,8 @@ header img#logo {
 }
 
 main {
-  height: 690px;
-  margin-top: 70px;
+  height: calc(100% - 160px);
+  margin-top: 160px;
   padding: 20px;
 }
 
@@ -43,6 +44,7 @@ main {
 
 .box p {
   font-size: .9rem;
+  font-weight: bold;
 }
 
 .box span {
@@ -57,8 +59,8 @@ main {
 .under::before {
   content: '';
   position: absolute;
-  background-color: #7eb6ff;
-  bottom: -10px;
+  background-color: #003477;
+  bottom: -5px;
   left: -5px;
   width: inherit;
   height: 1px;
@@ -66,4 +68,12 @@ main {
 
 .date {
   font-size: .9rem;
+}
+
+#footer-contact {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 794px;
+  padding: 10px 0;
 }

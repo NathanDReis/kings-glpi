@@ -27,6 +27,7 @@ import { InputIcon } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 import { BudgetClientInterface, BudgetInterface } from '../../../interfaces/budget';
 import { BudgetService } from '../../../services/budget';
@@ -75,7 +76,7 @@ export class BudgetComponent implements OnInit {
     selectedBudgets!: BudgetInterface[] | null;
     @ViewChild('dt') dt!: Table;
 
-    budgetSelected: BudgetInterface | null = null;
+    budgetSelected: BudgetInterface[] = [];
 
     cols: Column[] = [
         { field: 'name', header: 'Nome' },
@@ -200,21 +201,61 @@ export class BudgetComponent implements OnInit {
         this.client = client;
     }
 
-    download(budget: BudgetInterface): void {
-        this.loading.run();
+    produtosTemplate = [];
+
+    async download(budget: BudgetInterface): Promise<void> {
         const html = document.querySelector('#content');
+        this.loading.run();
+
+        const maxProductsPerPage = 7;
+        const pages = Math.ceil(budget.products!.length / maxProductsPerPage);
+        const resultPages: BudgetInterface[] = [];
+
+        if (pages > 1) {
+            for (let i = 0; i < pages; i++) {
+                const start = i * maxProductsPerPage;
+                const end = start + maxProductsPerPage;
+                const budgetPage: BudgetInterface = {
+                    ...budget,
+                    products: budget.products!.slice(start, end)
+                };
+                resultPages.push(budgetPage);
+            }
+        }
+
+        this.budgetSelected = pages <= 1 ? [budget] : resultPages;
         html?.classList.remove("hidden");
-        this.budgetSelected = budget;
-        setTimeout(() => {
-            const jspdf = new jsPDF('p', 'pt', 'a4');   
-    
-            jspdf.html(this.el.nativeElement, {
-                callback: (pdf) => {
-                    html?.classList.add("hidden");
-                    this.loading.stop();
-                    pdf.save(`orcamento_${budget.name}.pdf`);
-                }
-            });
-        }, 1000);
+
+        try {
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const pdf = new jsPDF("p", "mm", "a4");
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            // captura cada template separadamente
+            const templates = html!.querySelectorAll("template-pdf");
+
+            for (let i = 0; i < templates.length; i++) {
+                const el = templates[i] as HTMLElement;
+
+                const canvas = await html2canvas(el, {
+                    scale: 4,
+                    width: 794,
+                    height: 1123
+                });
+                const imgData = canvas.toDataURL("image/png");
+
+                if (i > 0) pdf.addPage();
+                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            }
+
+            pdf.save(`${budget.name}.pdf`);
+        } catch (error) {
+            this.toast.show("Erro no download", 'error', 5000);
+        } finally {
+            html?.classList.add("hidden");
+            this.loading.stop();
+        }
     }
 }

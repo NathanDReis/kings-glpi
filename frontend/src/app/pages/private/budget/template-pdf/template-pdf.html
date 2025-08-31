@@ -6,8 +6,8 @@
   </header>
 
   <main>
-    <div class="flex justify-between mb-10">
-      <h1 class="text-[#003477] font-extrabold text-2xl">ORÇAMENTO</h1>
+    <div class="flex justify-between mb-10 text-[#003477]">
+      <h1 class="font-extrabold text-2xl">ORÇAMENTO</h1>
 
       <div class="box">
         <p>DATA:</p>
@@ -50,6 +50,67 @@
         </span>
       </div>
     </div>
-  </main>
 
+    <div class="mt-24">
+      <p-table 
+        #dt 
+        [value]="budget ? budget.products : []" 
+        [columns]="cols" 
+        [rowHover]="true" 
+        dataKey="id"
+        size="small"
+      >
+        <ng-template #header>
+          <tr>
+            <th pSortableColumn="name">
+              <div class="flex items-center gap-2">
+                Nome
+              </div>
+            </th>
+            <th pSortableColumn="quantity">
+              <div class="flex items-center gap-2">
+                Quantidade
+              </div>
+            </th>
+            <th pSortableColumn="price">
+              <div class="flex items-center gap-2">
+                Preço
+              </div>
+            </th>
+            <th pSortableColumn="total">
+              <div class="flex items-center gap-2">
+                Total
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+  
+        <ng-template #body let-product>
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+            <td>{{ product.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="footer" #footer>
+          <tr class="font-bold">
+            <td colspan="3">Mão de Obra</td>
+            <td>{{ (budget ? budget.workforce ?? 0 : 0) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+          </tr>
+          <tr class="font-bold">
+            <td colspan="3">Total</td>
+            <td>{{ budget?.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div id="footer-contact" class="mt-24 text-center text-[#003477]">
+      <p>(31) 9250-2904 | vendas@mlktecnologia.com.br</p>
+      <p>52.790.639/0001-11 | R. Walter Adriano Macedo, 101, Minas Gerais, Sete Lagoas, Brasil, 35703-262</p>
+      <p class="font-bold">Validade do orçamento: 30 dias</p>
+    </div>
+  </main>
 </div>

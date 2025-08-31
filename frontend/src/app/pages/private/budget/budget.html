@@ -12,7 +12,7 @@
         [rows]="5"
         [columns]="cols"
         [paginator]="true"
-        [globalFilterFields]="['name', 'responsible', 'client.name']"
+        [globalFilterFields]="['name', 'responsible', 'client.name', 'price', 'status']"
         [(selection)]="selectedBudgets"
         [rowHover]="true"
         dataKey="id"
@@ -89,7 +89,9 @@
     </p-table>
 
     <div id="content" #content class="hidden">
-        <template-pdf [budget]="budgetSelected"></template-pdf>
+        @for (budget of budgetSelected; track budget.id) {
+            <template-pdf [budget]="budget"></template-pdf>
+        }
     </div>
 
     <p-dialog header="Informações de contato" [modal]="true" [(visible)]="visibleInfoClient" [style]="{ width: '25rem' }">

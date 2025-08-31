@@ -17,10 +17,10 @@ import { ProductService } from '../../../../services/product';
 import { LoadingService } from '../../../../services/loading';
 import { ProductInterface } from '../../../../interfaces/product';
 import { ToastService } from '../../../../services/toast';
-import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import { Column } from '../../../../interfaces/table';
 import { BudgetService } from '../../../../services/budget';
 
+import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
 registerLocaleData(localePt);
 
