@@ -1,13 +1,13 @@
-<div id="content" class="w-full h-full bg-white p-8 font-sans">
+<div id="content" class="w-full h-full p-8 font-sans">
   <!-- Header -->
   <div class="flex justify-between items-start mb-8">
     <div class="flex items-center">
       <img src="logo.png" class="h-12 mr-2" alt="MLK tecnologia Logo" />
-      <span class="text-2xl font-bold text-blue-900">MLK</span>
-      <span class="text-2xl font-bold text-[#9dff6f]">tecnologia</span>
+      <span class="text-2xl font-bold template-header-blue">MLK</span>
+      <span class="text-2xl font-bold template-header-green">tecnologia</span>
     </div>
     <div class="text-right">
-      <div class="bg-gray-200 px-4 py-2 text-center">
+      <div class="template-bg-gray-200 px-4 py-2 text-center">
         <div class="font-semibold">ORÇAMENTO {{ budget?.id || '50' }}</div>
         <div class="text-sm">{{ date }}</div>
       </div>
@@ -15,17 +15,17 @@
   </div>
 
   <!-- Notice Text -->
-  <div class="text-xs text-gray-600 mb-6">
+  <div class="text-xs template-text-gray-600 mb-6">
     Este orçamento é válido por 30 dias a partir da data de emissão.
   </div>
 
   <!-- Delivery Forecast -->
-  <div class="bg-gray-100 px-4 py-2 mb-6">
+  <div class="template-bg-gray-100 px-4 py-2 mb-6">
     <span class="font-semibold text-sm">PREVISÃO DE ENTREGA: {{ budget?.deliveryExpected ?? '' }}</span>
   </div>
 
   <!-- Client Data -->
-  <div class="bg-gray-100 px-4 py-2 mb-4">
+  <div class="template-bg-gray-100 px-4 py-2 mb-4">
     <span class="font-semibold text-sm">DADOS DO CLIENTE</span>
   </div>
 
@@ -65,13 +65,13 @@
   </div>
 
   <!-- Products -->
-  <div class="bg-gray-100 px-4 py-2 mb-2">
+  <div class="template-bg-gray-100 px-4 py-2 mb-2">
     <span class="font-semibold text-sm">PRODUTOS</span>
   </div>
 
   <p-table [value]="budget?.products || []" class="mb-4">
     <ng-template pTemplate="header">
-      <tr class="bg-gray-50">
+      <tr class="template-bg-gray-50">
         <th class="text-left p-2 text-xs font-semibold border-b">ITEM</th>
         <th class="text-left p-2 text-xs font-semibold border-b">NOME</th>
         <th class="text-center p-2 text-xs font-semibold border-b">QTD.</th>
@@ -95,13 +95,13 @@
   </div>
 
   <!-- Serviços -->
-  <div class="bg-gray-100 px-4 py-2 mb-2">
+  <div class="template-bg-gray-100 px-4 py-2 mb-2">
     <span class="font-semibold text-sm">SERVIÇOS</span>
   </div>
 
   <p-table [value]="budget?.services || []" class="mb-4">
     <ng-template pTemplate="header">
-      <tr class="bg-gray-50">
+      <tr class="template-bg-gray-50">
         <th class="text-left p-2 text-xs font-semibold border-b">ITEM</th>
         <th class="text-left p-2 text-xs font-semibold border-b">NOME</th>
         <th class="text-center p-2 text-xs font-semibold border-b">QTD.</th>
@@ -130,7 +130,7 @@
 
   <!-- Signature -->
   <div class="mt-16">
-    <div class="border-t border-black w-80 mx-auto"></div>
+    <div class="border-t template-border-black w-80 mx-auto"></div>
     <div class="text-center text-sm mt-2">Assinatura do Cliente</div>
   </div>
 </div>

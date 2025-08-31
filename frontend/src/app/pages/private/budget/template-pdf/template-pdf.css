@@ -3,8 +3,30 @@
   width: 794px;
   height: 1123px;
   background-color: #ffffff;
-
   overflow: hidden;
   position: relative;
+}
+
+/* Cores do template */
+.template-header-blue {
+  color: #1e3a8a; /* text-blue-900 */
+}
+.template-header-green {
+  color: #9dff6f;
+}
+.template-bg-gray-100 {
+  background-color: #f3f4f6;
+}
+.template-bg-gray-200 {
+  background-color: #e5e7eb;
+}
+.template-bg-gray-50 {
+  background-color: #f9fafb;
+}
+.template-text-gray-600 {
+  color: #4b5563;
+}
+.template-border-black {
+  border-color: #000000;
 }
 
