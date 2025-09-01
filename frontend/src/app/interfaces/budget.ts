@@ -1,5 +1,10 @@
 import { SoftBaseInterface } from "./softdelete"
 
+export interface BudgetTemplateInterface extends BudgetInterface {
+  pageCount: number
+  totalPage: number
+}
+
 export interface BudgetInterface extends SoftBaseInterface {
   name: string
   description?: string 

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 
 import { TableModule } from 'primeng/table';
 
-import { BudgetInterface } from '../../../../interfaces/budget';
+import { BudgetTemplateInterface } from '../../../../interfaces/budget';
 
 import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
@@ -15,7 +15,7 @@ registerLocaleData(localePt);
   styleUrl: './template-pdf.css'
 })
 export class TemplatePdf {
-  @Input() budget: BudgetInterface | null = null;
+  @Input() budget: BudgetTemplateInterface | null = null;
 
   get date(): string {
     const now = new Date();

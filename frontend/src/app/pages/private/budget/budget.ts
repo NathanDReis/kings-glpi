@@ -29,7 +29,7 @@ import { DialogModule } from 'primeng/dialog';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-import { BudgetClientInterface, BudgetInterface } from '../../../interfaces/budget';
+import { BudgetClientInterface, BudgetInterface, BudgetTemplateInterface } from '../../../interfaces/budget';
 import { BudgetService } from '../../../services/budget';
 import { ToastService } from '../../../services/toast';
 import { LoadingService } from '../../../services/loading';
@@ -76,7 +76,7 @@ export class BudgetComponent implements OnInit {
     selectedBudgets!: BudgetInterface[] | null;
     @ViewChild('dt') dt!: Table;
 
-    budgetSelected: BudgetInterface[] = [];
+    budgetSelected: BudgetTemplateInterface[] = [];
 
     cols: Column[] = [
         { field: 'name', header: 'Nome' },
@@ -201,30 +201,43 @@ export class BudgetComponent implements OnInit {
         this.client = client;
     }
 
-    produtosTemplate = [];
 
     async download(budget: BudgetInterface): Promise<void> {
-        const html = document.querySelector('#content');
         this.loading.run();
+        const html = document.querySelector('#content');
+        const budgetLocal: BudgetTemplateInterface = { 
+            ...budget,
+            pageCount: 1,
+            totalPage: 1
+        };
 
-        const maxProductsPerPage = 7;
-        const pages = Math.ceil(budget.products!.length / maxProductsPerPage);
-        const resultPages: BudgetInterface[] = [];
+        const totalItems = budgetLocal.products!.length + (budgetLocal.services ? budgetLocal.services.length : 0);
+        let maxItemsPerPage = 6;
+        const maxItemPerPage = (items: number) => {
+            return Math.ceil(items / totalItems * maxItemsPerPage);
+        };
+        const pages = Math.ceil(totalItems / maxItemsPerPage);
+
+        const resultPages: BudgetTemplateInterface[] = [];
 
         if (pages > 1) {
             for (let i = 0; i < pages; i++) {
-                const start = i * maxProductsPerPage;
-                const end = start + maxProductsPerPage;
-                const budgetPage: BudgetInterface = {
-                    ...budget,
-                    products: budget.products!.slice(start, end)
-                };
+                const startP = i * maxItemPerPage(budgetLocal.products!.length);
+                const startS = i * maxItemPerPage(budgetLocal.services ? budgetLocal.services.length : 0);
+                const endP = startP + maxItemPerPage(budgetLocal.products!.length);
+                const endS = startS + maxItemPerPage(budgetLocal.services ? budgetLocal.services.length : 0);
+                const budgetPage: BudgetTemplateInterface = {
+                    ...budgetLocal,
+                    products: budget.products!.slice(startP, endP),
+                    services: budget.services?.slice(startS, endS),
+                    pageCount: i + 1,
+                    totalPage: pages
+                };1
                 resultPages.push(budgetPage);
             }
         }
 
-        this.budgetSelected = pages <= 1 ? [budget] : resultPages;
-        // this.budgetSelected = [budget];
+        this.budgetSelected = resultPages.length ? resultPages : [budgetLocal];
         html?.classList.remove("hidden");
 
         try {
