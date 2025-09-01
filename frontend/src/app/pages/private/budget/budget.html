@@ -1,8 +1,8 @@
-<div class="card mx-20 py-24">
+<div class="card mx-2 py-12 md:mx-20 md:py-24">
     <p-toolbar class="mb-6">
         <ng-template #start>
             <p-button label="Novo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" />
-            <p-button severity="danger" label="Deletar" icon="pi pi-trash" outlined (onClick)="deleteSelectedBudgets()" [disabled]="!selectedBudgets || !selectedBudgets.length" />
+            <p-button class="desktop" severity="danger" label="Deletar" icon="pi pi-trash" outlined (onClick)="deleteSelectedBudgets()" [disabled]="!selectedBudgets || !selectedBudgets.length" />
         </ng-template>
     </p-toolbar>
 
@@ -18,6 +18,7 @@
         dataKey="id"
         currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} resultados"
         [showCurrentPageReport]="true"
+        size="small"
     >
         <ng-template #caption>
             <div class="flex items-center justify-between">
@@ -30,7 +31,7 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th>
+                <th class="desktop">
                     <p-tableHeaderCheckbox />
                 </th>
                 <th pSortableColumn="status">
@@ -39,7 +40,7 @@
                         <p-sortIcon field="status" />
                     </div>
                 </th>
-                <th pSortableColumn="name">
+                <th pSortableColumn="name" class="desktop">
                     <div class="flex items-center gap-2">
                         Nome
                         <p-sortIcon field="name" />
@@ -51,7 +52,7 @@
                         <p-sortIcon field="price" />
                     </div>
                 </th>
-                <th pSortableColumn="responsible">
+                <th pSortableColumn="responsible" class="desktop">
                     <div class="flex items-center gap-2">
                         Responsável
                         <p-sortIcon field="responsible" />
@@ -68,13 +69,13 @@
         </ng-template>
         <ng-template #body let-budget>
             <tr>
-                <td style="width: 3rem" [ngClass]="{ 'bg-[#FACC15]': budget.status === 'pending', 'bg-[#22C55E]': budget.status === 'approved', 'bg-[#EF4444]': budget.status === 'rejected' }">
+                <td class="desktop" style="width: 3rem" [ngClass]="{ 'bg-[#FACC15]': budget.status === 'pending', 'bg-[#22C55E]': budget.status === 'approved', 'bg-[#EF4444]': budget.status === 'rejected' }">
                     <p-tableCheckbox [value]="budget" />
                 </td>
                 <td>{{ statusMap[budget.status] }}</td>
-                <td>{{ budget.name }}</td>
+                <td class="desktop">{{ budget.name }}</td>
                 <td>{{ budget.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-                <td>{{ budget.responsible }}</td>
+                <td class="desktop">{{ budget.responsible }}</td>
                 <td>
                     <p-button icon="pi pi-info" class="mr-3" [rounded]="true" [outlined]="true" [raised]="false" severity="info" (onClick)="openDialogClient(budget.client)" />
                     {{ budget.client?.name }}

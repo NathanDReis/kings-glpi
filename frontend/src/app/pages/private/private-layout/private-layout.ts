@@ -100,9 +100,9 @@ export class PrivateLayoutComponent implements AfterViewInit, OnInit {
 
   itemsConfig: MenuItem[] = [
     {
-      label: 'Configurações',
-      icon: 'pi pi-fw pi-cog',
-      command: () => this.router.navigate(['/configuracoes'])
+      label: 'MLK Tecnologia',
+      icon: 'pi pi-fw pi-shield',
+      command: () => window.open('https://mlktecnologia.com.br')
     },
     {
       separator: true

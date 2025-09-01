@@ -108,9 +108,15 @@
                   <p-sortIcon field="name" />
                 </div>
               </th>
-              <th pSortableColumn="quantity">
+              <th class="desktop" pSortableColumn="quantity">
                 <div class="flex items-center gap-2">
                   Quantidade
+                  <p-sortIcon field="quantity" />
+                </div>
+              </th>
+              <th class="mobile" pSortableColumn="quantity">
+                <div class="flex items-center gap-2">
+                  Qtd
                   <p-sortIcon field="quantity" />
                 </div>
               </th>
@@ -120,7 +126,7 @@
                   <p-sortIcon field="price" />
                 </div>
               </th>
-              <th pSortableColumn="total">
+              <th pSortableColumn="total" class="desktop">
                 <div class="flex items-center gap-2">
                   Total
                   <p-sortIcon field="total" />
@@ -134,8 +140,10 @@
             <tr>
               <td>{{ product.name }}</td>
               <td>{{ product.quantity }}</td>
-              <td>{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-              <td>{{ product.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+              <td>
+                {{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+              <td class="desktop">{{ product.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
               <td class="">
                 <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
                   (click)="editProduct(product)" />
@@ -202,9 +210,15 @@
                     <p-sortIcon field="name" />
                   </div>
                 </th>
-                <th pSortableColumn="quantity">
+                <th class="desktop" pSortableColumn="quantity">
                   <div class="flex items-center gap-2">
                     Quantidade
+                    <p-sortIcon field="quantity" />
+                  </div>
+                </th>
+                <th class="mobile" pSortableColumn="quantity">
+                  <div class="flex items-center gap-2">
+                    Qtd
                     <p-sortIcon field="quantity" />
                   </div>
                 </th>
@@ -214,7 +228,7 @@
                     <p-sortIcon field="price" />
                   </div>
                 </th>
-                <th pSortableColumn="total">
+                <th class="desktop" pSortableColumn="total">
                   <div class="flex items-center gap-2">
                     Total
                     <p-sortIcon field="total" />
@@ -229,7 +243,7 @@
                 <td>{{ service.name }}</td>
                 <td>{{ service.quantity }}</td>
                 <td>{{ service.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-                <td>{{ service.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+                <td class="desktop">{{ service.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
                 <td class="">
                   <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
                     (click)="editService(service)" />
