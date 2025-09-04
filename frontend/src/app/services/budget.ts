@@ -11,6 +11,7 @@ import {
   getDocs, 
   orderBy, 
   query, 
+  runTransaction, 
   Timestamp, 
   updateDoc, 
   where 
@@ -31,8 +32,18 @@ export class BudgetService {
   // CREATE - Criar novo orçamento
   async create(budget: Omit<BudgetInterface, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>): Promise<DocumentReference<DocumentData, DocumentData>> {
     const now = Timestamp.now();
+    const counterRef = doc(this.fire, 'counters/budgetCode');
+    let code: number = 0;
+
+    await runTransaction(this.fire, async (transaction) => {
+      const counterSnap = await transaction.get(counterRef);
+      code = (counterSnap.exists() ? counterSnap.data()['value'] : 0) + 1;
+      transaction.set(counterRef, { value: code });
+    });
+
     const budgetData = {
       ...budget,
+      code,
       createdAt: now,
       updatedAt: now,
       deletedAt: null
