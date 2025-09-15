@@ -22,7 +22,16 @@
         <div class="flex flex-col gap-6">
           <div>
             <label for="name" class="block font-bold mb-3">Nome</label>
-            <input type="text" pInputText id="name" [(ngModel)]="budget.name" placeholder="Nome do orçamento" required autofocus fluid />
+            <p-autocomplete 
+              id="name" 
+              [(ngModel)]="budget.name" 
+              [suggestions]="budgetsNameAutoComplete" 
+              placeholder="Nome do orçamento" 
+              (completeMethod)="searchBudgetNames($event)" 
+              required 
+              autofocus 
+              fluid 
+            />
             @if (!budget.name || (!!budget.name && budget.name.trim().length === 0)) {
             <p class="text-red-500">Nome é obrigatório.</p>
             }
@@ -47,7 +56,14 @@
 
           <div>
             <label for="responsible" class="block font-bold mb-3">Responsável</label>
-            <input type="text" pInputText id="responsible" [(ngModel)]="budget.responsible" placeholder="Responsável pelo orçamento" autofocus fluid />
+            <p-autocomplete 
+              id="responsible" 
+              [(ngModel)]="budget.responsible" 
+              placeholder="Responsável pelo orçamento" 
+              [suggestions]="budgetsResponsibleAutoComplete" 
+              (completeMethod)="searchBudgetResponsible($event)" 
+              fluid 
+            />
           </div>
         </div>
       </ng-template>
@@ -161,7 +177,15 @@
     <p-card header="Serviços">
         <div>
           <label for="service_name" class="block font-bold mb-3">Serviço</label>
-            <input type="text" pInputText id="service_name" [(ngModel)]="service.name" placeholder="Nome do serviço" autofocus fluid />
+            <p-autocomplete 
+              id="service_name" 
+              [(ngModel)]="service.name" 
+              placeholder="Nome do serviço" 
+              [suggestions]="servicesAutoComplete" 
+              (completeMethod)="searchServices($event)" 
+              autofocus 
+              fluid 
+            />
         </div>
   
         <div class="flex items-center justify-between flex-wrap gap-6 mt-6">
@@ -262,8 +286,17 @@
       <ng-template #content>
         <div class="flex items-start justify-center flex-wrap gap-6">
           <div class="grow">
-            <label for="name" class="block font-bold mb-3">Nome</label>
-            <input type="text" pInputText id="name" [(ngModel)]="budget.client.name" placeholder="Nome do cliente" required autofocus fluid />
+            <label for="clientName" class="block font-bold mb-3">Nome</label>
+            <p-autocomplete 
+              id="clientName" 
+              [(ngModel)]="budget.client.name" 
+              placeholder="Nome do cliente" 
+              [suggestions]="clientNameAutoComplete" 
+              (completeMethod)="searchClientNames($event)" 
+              required 
+              autofocus 
+              fluid 
+            />
             @if (!budget.client.name || (!!budget.client.name && budget.client.name.trim().length === 0)) {
               <p class="text-red-500">Nome é obrigatório.</p>
             }
@@ -300,8 +333,18 @@
           }
 
           <div class="grow">
-            <label for="email" class="block font-bold mb-3">E-mail</label>
-            <input type="email" pInputText id="email" [(ngModel)]="budget.client.email" placeholder="E-mail do cliente" required autofocus fluid />
+            <label for="clientEmail" class="block font-bold mb-3">E-mail</label>
+            <p-autocomplete 
+              type="email" 
+              id="clientEmail" 
+              [(ngModel)]="budget.client.email" 
+              placeholder="E-mail do cliente" 
+              [suggestions]="clientEmailAutoComplete" 
+              (completeMethod)="searchClientEmails($event)" 
+              required 
+              autofocus 
+              fluid 
+            />
             @if (!budget.client.email || (!!budget.client.email && budget.client.email.trim().length === 0)) {
               <p class="text-red-500">E-mail é obrigatório.</p>
             }
@@ -333,18 +376,42 @@
           </div>
 
           <div class="grow">
-            <label for="address" class="block font-bold mb-3">Endereço</label>
-            <input type="text" pInputText id="address" [(ngModel)]="budget.client.address" placeholder="Endereço do cliente" autofocus fluid />
+            <label for="clientAddress" class="block font-bold mb-3">Endereço</label>
+            <p-autocomplete 
+              id="clientAddress" 
+              [(ngModel)]="budget.client.address" 
+              placeholder="Endereço do cliente" 
+              [suggestions]="clientAddressAutoComplete" 
+              (completeMethod)="searchClientAddresses($event)" 
+              autofocus 
+              fluid 
+            />
           </div>
 
           <div class="grow">
-            <label for="city" class="block font-bold mb-3">Cidade</label>
-            <input type="text" pInputText id="city" [(ngModel)]="budget.client.city" placeholder="Cidade do cliente" autofocus fluid />
+            <label for="clientCity" class="block font-bold mb-3">Cidade</label>
+            <p-autocomplete 
+              id="clientCity" 
+              [(ngModel)]="budget.client.city" 
+              placeholder="Cidade do cliente" 
+              [suggestions]="clientCityAutoComplete" 
+              (completeMethod)="searchClientCities($event)" 
+              autofocus 
+              fluid 
+            />
           </div>
 
           <div class="grow">
-            <label for="state" class="block font-bold mb-3">Estado</label>
-            <input type="text" pInputText id="state" [(ngModel)]="budget.client.state" placeholder="Estado do cliente" autofocus fluid />
+            <label for="clientState" class="block font-bold mb-3">Estado</label>
+            <p-autocomplete 
+              id="clientState" 
+              [(ngModel)]="budget.client.state" 
+              placeholder="Estado do cliente" 
+              [suggestions]="clientStateAutoComplete" 
+              (completeMethod)="searchClientStates($event)" 
+              autofocus 
+              fluid 
+            />
           </div>
         </div>
       </ng-template>

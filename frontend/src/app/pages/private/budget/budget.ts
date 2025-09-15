@@ -42,6 +42,7 @@ interface Column {
 
 import localePt from '@angular/common/locales/pt';
 import { TemplatePdf } from './template-pdf/template-pdf';
+import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 registerLocaleData(localePt);
 
 @Component({
@@ -115,12 +116,34 @@ export class BudgetComponent implements OnInit {
         try {
             this.loading.run();
             this.budgets = await this.budgetService.findAll();
+            this.formatAutoComplete();
             this.cd.markForCheck();
         } catch (error) {
             this.toast.show('Não foi possível buscar orçamentos', 'error', 5000);
         } finally {
             this.loading.stop();
         }
+    }
+
+    formatAutoComplete(): void {
+        const clients: BudgetClientInterface[] = [];
+        const budgets: { name: string, responsible: string }[] = [];
+        const services: string[] = [];
+
+        this.budgets.forEach((b) => {
+            clients.push(b.client);
+            budgets.push({
+                name: b.name,
+                responsible: b.responsible
+            });
+            b.services.forEach((s) => {
+                services.push(s.name);
+            });
+        });
+
+        sessionStorage.setItem('clients', JSON.stringify(clients));
+        sessionStorage.setItem('budgets', JSON.stringify(budgets));
+        sessionStorage.setItem('services', JSON.stringify(services));
     }
 
     deleteSelectedBudgets(): void {

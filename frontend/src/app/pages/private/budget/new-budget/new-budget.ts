@@ -12,8 +12,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TableModule } from 'primeng/table';
 import { InputMaskModule } from 'primeng/inputmask';
 import { DatePickerModule } from 'primeng/datepicker';
+import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 
-import { BudgetInterface, BudgetProductInterface, BudgetServiceInterface } from '../../../../interfaces/budget';
+import { BudgetClientInterface, BudgetInterface, BudgetProductInterface, BudgetServiceInterface } from '../../../../interfaces/budget';
 import { ProductService } from '../../../../services/product';
 import { LoadingService } from '../../../../services/loading';
 import { ProductInterface } from '../../../../interfaces/product';
@@ -39,6 +40,7 @@ registerLocaleData(localePt);
     TableModule,
     InputMaskModule,
     DatePickerModule,
+    AutoCompleteModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt-BR' }
@@ -105,13 +107,170 @@ export class NewBudgetComponent implements OnInit {
 
   idProductCounter: number = 1;
   idServiceCounter: number = 1;
+
   ngOnInit(): void {
     this.loadProducts();
+    this.loadAutoComplete();
 
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 
     this.loadBudget(id);
+  }
+
+  
+  // Arrays para armazenar as sugestões dos autocompletes
+  budgetsNameAutoComplete: string[] = [];
+  budgetsResponsibleAutoComplete: string[] = [];
+  servicesAutoComplete: string[] = [];
+  clientNameAutoComplete: string[] = [];
+  clientEmailAutoComplete: string[] = [];
+  clientStateAutoComplete: string[] = [];
+  clientAddressAutoComplete: string[] = [];
+  clientCityAutoComplete: string[] = [];
+
+  // Arrays com todos os dados carregados
+  budgetsName: string[] = [];
+  budgetsResponsible: string[] = [];
+  services: string[] = [];
+  clientName: string[] = [];
+  clientEmail: string[] = [];
+  clientState: string[] = [];
+  clientAddress: string[] = [];
+  clientCity: string[] = [];
+
+  loadAutoComplete(): void {
+    try {
+      // Carregar dados dos orçamentos
+      const budgets: { name: string, responsible: string }[] = JSON.parse(sessionStorage.getItem('budgets') ?? '[]');
+      budgets.forEach((b) => {
+        if (b.name) this.budgetsName.push(b.name);
+        if (b.responsible) this.budgetsResponsible.push(b.responsible);
+      });
+
+      // Carregar dados dos serviços
+      const services: string[] = JSON.parse(sessionStorage.getItem('services') ?? '[]');
+      this.services = services.map((s) => s.toLowerCase());
+
+      // Carregar dados dos clientes
+      const clients: BudgetClientInterface[] = JSON.parse(sessionStorage.getItem('clients') ?? '[]');
+      clients.forEach((c) => {
+        if (c.name) this.clientName.push(c.name);
+        if (c.email) this.clientEmail.push(c.email);
+        if (c.state) this.clientState.push(c.state.toString());
+        if (c.address) this.clientAddress.push(c.address.toString());
+        if (c.city) this.clientCity.push(c.city.toString());
+      });
+
+      // Remover duplicatas dos arrays principais
+      this.budgetsName = [...new Set(this.budgetsName)];
+      this.budgetsResponsible = [...new Set(this.budgetsResponsible)];
+      this.services = [...new Set(this.services)];
+      this.clientName = [...new Set(this.clientName)];
+      this.clientEmail = [...new Set(this.clientEmail)];
+      this.clientState = [...new Set(this.clientState)];
+      this.clientAddress = [...new Set(this.clientAddress)];
+      this.clientCity = [...new Set(this.clientCity)];
+    } catch (error) {
+      console.error('Erro ao carregar dados do autocomplete:', error);
+    }
+  }
+
+  // Métodos específicos para cada autocomplete
+  searchBudgetNames(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.budgetsNameAutoComplete = [];
+      return;
+    }
+    
+    this.budgetsNameAutoComplete = this.budgetsName
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 10); // Limitar a 10 resultados para melhor performance
+  }
+
+  searchBudgetResponsible(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.budgetsResponsibleAutoComplete = [];
+      return;
+    }
+    
+    this.budgetsResponsibleAutoComplete = this.budgetsResponsible
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 10);
+  }
+
+  searchServices(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.servicesAutoComplete = [];
+      return;
+    }
+    
+    this.servicesAutoComplete = this.services
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 10);
+  }
+
+  searchClientNames(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.clientNameAutoComplete = [];
+      return;
+    }
+    
+    this.clientNameAutoComplete = this.clientName
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 10);
+  }
+
+  searchClientEmails(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.clientEmailAutoComplete = [];
+      return;
+    }
+    
+    this.clientEmailAutoComplete = this.clientEmail
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 10);
+  }
+
+  searchClientStates(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.clientStateAutoComplete = [];
+      return;
+    }
+    
+    this.clientStateAutoComplete = this.clientState
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 10);
+  }
+
+  searchClientAddresses(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.clientAddressAutoComplete = [];
+      return;
+    }
+    
+    this.clientAddressAutoComplete = this.clientAddress
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 10);
+  }
+
+  searchClientCities(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.clientCityAutoComplete = [];
+      return;
+    }
+    
+    this.clientCityAutoComplete = this.clientCity
+      .filter(item => item.toLowerCase().includes(query))
+      .slice(0, 10);
   }
 
   async loadBudget(id: string): Promise<void> {
