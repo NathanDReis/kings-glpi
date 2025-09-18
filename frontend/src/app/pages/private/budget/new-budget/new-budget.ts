@@ -81,6 +81,7 @@ export class NewBudgetComponent implements OnInit {
   ]
 
   productsSelect: ProductInterface[] = [];
+  productsSelectAutoComplete: string[] = [];
   productsSelectCache: ProductInterface[] = [];
   loadingProducts: boolean = false;
 
@@ -273,6 +274,19 @@ export class NewBudgetComponent implements OnInit {
       .slice(0, 10);
   }
 
+  searchProductName(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim().toLowerCase();
+    if (query.length === 0) {
+      this.productsSelectAutoComplete = [];
+      return;
+    }
+    
+    this.productsSelectAutoComplete = [...this.productsSelect]
+      .filter(item => item.name.toLowerCase().includes(query))
+      .slice(0, 10)
+      .map(item => item.name);
+  }
+
   async loadBudget(id: string): Promise<void> {
     try {
       this.loading.run();
@@ -330,8 +344,14 @@ export class NewBudgetComponent implements OnInit {
     }
   }
 
-  addProduct(): void {
+  async addProduct(): Promise<void> {
     if (this.formInvalidProduct()) return;
+
+    const productResult = this.productsSelect.filter(p => this.product.name.trim().toLowerCase() === p.name.trim().toLowerCase());
+    
+    if (productResult.length === 0) {
+      await this.saveProduct();
+    }
 
     this.product.id = this.idProductCounter++;
 
@@ -345,6 +365,22 @@ export class NewBudgetComponent implements OnInit {
       price: 0,
       total: 0
     };
+  }
+
+  async saveProduct(): Promise<void> {
+    try {
+      if (!this.product?.name.trim()) return 
+
+      this.loading.run();
+      
+      await this.productService.create({name: this.product.name});
+      await this.loadProducts();
+      this.toast.show('Produto criado', 'success');
+    } catch (error) {
+      this.toast.show('Não foi possível criar produto', 'error', 5000);
+    } finally {
+      this.loading.stop();
+    }
   }
 
   addService(): void {
@@ -387,6 +423,7 @@ export class NewBudgetComponent implements OnInit {
   addProductSelect(product: BudgetProductInterface): void {
     this.productsSelect = [...this.productsSelect, this.productsSelectCache.find(p => p.name === product.name)!];
     this.productsSelect.sort((a, b) => a.name.localeCompare(b.name));
+    this.productsSelect = this.productsSelect.filter(item => !!item);
   }
 
   removeProductSelect(product: BudgetProductInterface): void {
