@@ -14,56 +14,56 @@
     </div>
   </div>
 
-  <!-- Notice Text -->
   <div class="text-xs template-text-gray-600 mb-5">
-    Este orçamento é válido por 30 dias a partir da data de emissão.
     {{ budget?.description }}
   </div>
 
-  <!-- Delivery Forecast -->
-  <div class="template-bg-gray-100 px-4 py-2 mb-5">
-    <span class="font-semibold text-sm">PREVISÃO DE ENTREGA: {{ budget?.deliveryExpected ?? '' }}</span>
-  </div>
+  @if (budget!.pageCount == 1) {
+    <!-- Delivery Forecast -->
+    <div class="template-bg-gray-100 px-4 py-2 mb-5">
+      <span class="font-semibold text-sm">PREVISÃO DE ENTREGA: {{ budget?.deliveryExpected ?? '' }}</span>
+    </div>
 
-  <!-- Client Data -->
-  <div class="template-bg-gray-100 px-4 py-2 mb-4">
-    <span class="font-semibold text-sm">DADOS DO CLIENTE</span>
-  </div>
+    <!-- Client Data -->
+    <div class="template-bg-gray-100 px-4 py-2 mb-4">
+      <span class="font-semibold text-sm">DADOS DO CLIENTE</span>
+    </div>
 
-  <div class="grid grid-cols-2 gap-4 mb-5 text-sm">
-    <div class="flex">
-      <span class="font-medium w-20">Cliente:</span>
-      <span>{{ budget?.client?.name || 'João Pereira' }}</span>
+    <div class="grid grid-cols-2 gap-4 mb-5 text-sm">
+      <div class="flex">
+        <span class="font-medium w-20">Cliente:</span>
+        <span>{{ budget?.client?.name || 'João Pereira' }}</span>
+      </div>
+      <div class="flex">
+        <span class="font-medium w-20">CNPJ/CPF:</span>
+        <span>{{ budget?.client?.cnpj || budget?.client?.cpf || '' }}</span>
+      </div>
+      <div class="flex">
+        <span class="font-medium w-20">Endereço:</span>
+        <span>{{ budget?.client?.address || '' }}</span>
+      </div>
+      <div class="flex">
+        <span class="font-medium w-20">CEP:</span>
+        <span>{{ budget?.client?.cep || '' }}</span>
+      </div>
+      <div class="flex">
+        <span class="font-medium w-20">Cidade:</span>
+        <span>{{ budget?.client?.city || '' }}</span>
+      </div>
+      <div class="flex">
+        <span class="font-medium w-20">Estado:</span>
+        <span>{{ budget?.client?.state || '' }}</span>
+      </div>
+      <div class="flex">
+        <span class="font-medium w-20">Telefone:</span>
+        <span>{{ budget?.client?.phone || '' }}</span>
+      </div>
+      <div class="flex">
+        <span class="font-medium w-20">E-mail:</span>
+        <span>{{ budget?.client?.email || '' }}</span>
+      </div>
     </div>
-    <div class="flex">
-      <span class="font-medium w-20">CNPJ/CPF:</span>
-      <span>{{ budget?.client?.cnpj || budget?.client?.cpf || '' }}</span>
-    </div>
-    <div class="flex">
-      <span class="font-medium w-20">Endereço:</span>
-      <span>{{ budget?.client?.address || '' }}</span>
-    </div>
-    <div class="flex">
-      <span class="font-medium w-20">CEP:</span>
-      <span>{{ budget?.client?.cep || '' }}</span>
-    </div>
-    <div class="flex">
-      <span class="font-medium w-20">Cidade:</span>
-      <span>{{ budget?.client?.city || '' }}</span>
-    </div>
-    <div class="flex">
-      <span class="font-medium w-20">Estado:</span>
-      <span>{{ budget?.client?.state || '' }}</span>
-    </div>
-    <div class="flex">
-      <span class="font-medium w-20">Telefone:</span>
-      <span>{{ budget?.client?.phone || '' }}</span>
-    </div>
-    <div class="flex">
-      <span class="font-medium w-20">E-mail:</span>
-      <span>{{ budget?.client?.email || '' }}</span>
-    </div>
-  </div>
+  }
 
 
   @if (budget?.products?.length) {
@@ -136,13 +136,13 @@
     </div>
   }
 
-  <!-- Signature -->
-  <div class="mt-14">
-    <div class="border-t template-border-black w-80 mx-auto"></div>
-    <div class="text-center text-sm mt-2">Assinatura do Cliente</div>
-  </div>
-
   @if (budget!.pageCount == budget!.totalPage || budget!.pageCount > 1) {
+    <!-- Signature -->
+    <div class="mt-14">
+      <div class="border-t template-border-black w-80 mx-auto"></div>
+      <div class="text-center text-sm mt-2">Assinatura do Cliente</div>
+    </div>
+
     <!-- Contact -->
     <div class="text-center text-xs template-text-gray-600 mt-6">
       <div>MLK tecnologia - Soluções em TI - 52.790.639/0001-11</div>
@@ -150,5 +150,12 @@
       <div>Endereço: R. Walter Adriano Macedo, 101, Minas Gerais, Sete Lagoas, CEP - 35703-262</div>
     </div>
   }
+
+  <!-- Notice Text -->
+  <div class="text-left text-xs template-text-gray-600 mt-6">
+    <div class="text-xs template-text-gray-600 mb-5">
+      Este orçamento é válido por 30 dias a partir da data de emissão.
+    </div>
+  </div>
 
 </div>
