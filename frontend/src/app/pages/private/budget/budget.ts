@@ -234,29 +234,80 @@ export class BudgetComponent implements OnInit {
             totalPage: 1
         };
 
-        const totalItems = budgetLocal.products!.length + (budgetLocal.services ? budgetLocal.services.length : 0);
-        let maxItemsPerPage = 6;
-        const maxItemPerPage = (items: number) => {
-            return Math.ceil(items / totalItems * maxItemsPerPage);
-        };
-        const pages = Math.ceil(totalItems / maxItemsPerPage);
+        const maxItemPerPage = 6;
+
+        // const totalItems = budgetLocal.products!.length + (budgetLocal.services ? budgetLocal.services.length : 0);
+        // const maxItemPerPage = (items: number) => {
+        //     return Math.ceil(items / totalItems * maxItemsPerPage);
+        // };
+        // const pages = Math.ceil(totalItems / maxItemsPerPage);
+
+        // const resultPages: BudgetTemplateInterface[] = [];
+
+        // if (pages > 1) {
+        //     for (let i = 0; i < pages; i++) {
+        //         const startP = i * maxItemPerPage(budgetLocal.products!.length);
+        //         const startS = i * maxItemPerPage(budgetLocal.services ? budgetLocal.services.length : 0);
+        //         const endP = startP + maxItemPerPage(budgetLocal.products!.length);
+        //         const endS = startS + maxItemPerPage(budgetLocal.services ? budgetLocal.services.length : 0);
+        //         const budgetPage: BudgetTemplateInterface = {
+        //             ...budgetLocal,
+        //             products: budget.products!.slice(startP, endP),
+        //             services: budget.services?.slice(startS, endS),
+        //             pageCount: i + 1,
+        //             totalPage: pages
+        //         };1
+        //         resultPages.push(budgetPage);
+        //     }
+        // }
 
         const resultPages: BudgetTemplateInterface[] = [];
 
-        if (pages > 1) {
-            for (let i = 0; i < pages; i++) {
-                const startP = i * maxItemPerPage(budgetLocal.products!.length);
-                const startS = i * maxItemPerPage(budgetLocal.services ? budgetLocal.services.length : 0);
-                const endP = startP + maxItemPerPage(budgetLocal.products!.length);
-                const endS = startS + maxItemPerPage(budgetLocal.services ? budgetLocal.services.length : 0);
-                const budgetPage: BudgetTemplateInterface = {
-                    ...budgetLocal,
-                    products: budget.products!.slice(startP, endP),
-                    services: budget.services?.slice(startS, endS),
-                    pageCount: i + 1,
-                    totalPage: pages
-                };1
-                resultPages.push(budgetPage);
+        let servicesFirstPage = 0;
+        if (budgetLocal.products!.length === 6) {
+            resultPages.push({
+                ...budgetLocal,
+                products: [...budgetLocal.products],
+                services: [],
+                pageCount: 1,
+            });
+        } else if (budgetLocal.products!.length < 6) {
+            servicesFirstPage = maxItemPerPage - budgetLocal.products!.length;
+            resultPages.push({
+                ...budgetLocal,
+                products: [...budgetLocal.products],
+                services: budgetLocal.services && budgetLocal.services.length ? [...budgetLocal.services.slice(0, servicesFirstPage)] : [],
+                pageCount: 1,
+            });
+        } else {
+            const pagesProducts = Math.ceil(budgetLocal.products!.length / maxItemPerPage);
+            const productsLastPage = budgetLocal.products!.length % maxItemPerPage;
+            for (let i = 0; i < pagesProducts; i++) {
+                const startP = i * maxItemPerPage;
+                const endP = startP + maxItemPerPage;
+                if (i === 0) {
+                    resultPages.push({
+                        ...budgetLocal,
+                        products: budgetLocal.products!.slice(startP, endP),
+                        services: [],
+                        pageCount: i + 1,
+                    });
+                } else if (i === pagesProducts - 1) {
+                    servicesFirstPage = maxItemPerPage - productsLastPage;
+                    resultPages.push({
+                        ...budgetLocal,
+                        products: budgetLocal.products!.slice(startP, endP),
+                        services: budgetLocal.services && budgetLocal.services.length ? [...budgetLocal.services.slice(0, servicesFirstPage)] : [],
+                        pageCount: i + 1,
+                    });
+                } else {
+                    resultPages.push({
+                        ...budgetLocal,
+                        products: budgetLocal.products!.slice(startP, endP),
+                        services: [],
+                        pageCount: i + 1,
+                    });
+                }
             }
         }
 
