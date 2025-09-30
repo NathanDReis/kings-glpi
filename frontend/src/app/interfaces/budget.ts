@@ -36,6 +36,7 @@ export interface BudgetProductInterface {
   quantity: number
   price: number
   total: number
+  num?: number
 }
 
 export interface BudgetServiceInterface {
@@ -44,4 +45,5 @@ export interface BudgetServiceInterface {
   quantity: number
   price: number
   total: number
+  num?: number
 }

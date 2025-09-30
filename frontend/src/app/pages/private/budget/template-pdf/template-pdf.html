@@ -84,7 +84,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-product let-i="rowIndex">
         <tr class="border-b">
-          <td class="p-2 text-xs">{{ i + 1 }}</td>
+          <td class="p-2 text-xs">{{ product!.num }}</td>
           <td class="p-2 text-xs">{{ product.name }}</td>
           <td class="p-2 text-xs text-center">{{ product.quantity }}</td>
           <td class="p-2 text-xs text-center">{{ product.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
@@ -116,7 +116,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-service let-i="rowIndex">
         <tr class="border-b">
-          <td class="p-2 text-xs">{{ i + 1 }}</td>
+          <td class="p-2 text-xs">{{service!.num }}</td>
           <td class="p-2 text-xs">{{ service.name }}</td>
           <td class="p-2 text-xs text-center">{{ service.quantity }}</td>
           <td class="p-2 text-xs text-center">{{ service.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
@@ -136,7 +136,7 @@
     </div>
   }
 
-  @if (budget!.pageCount == budget!.totalPage || budget!.pageCount > 1) {
+  @if (budget!.pageCount == budget!.totalPage) {
     <!-- Signature -->
     <div class="mt-14">
       <div class="border-t template-border-black w-80 mx-auto"></div>

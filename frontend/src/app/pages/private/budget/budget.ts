@@ -226,125 +226,160 @@ export class BudgetComponent implements OnInit {
 
 
     async download(budget: BudgetInterface): Promise<void> {
-        this.loading.run();
+        // this.loading.run();
         const html = document.querySelector('#content');
         const budgetLocal: BudgetTemplateInterface = { 
             ...budget,
+            products: budget.products.map((p, index) => ({...p, num: index + 1})),
+            services: budget.services.map((s, index) => ({...s, num: index + 1})),
             pageCount: 1,
             totalPage: 1
         };
 
-        const maxItemPerPage = 6;
-
-        // const totalItems = budgetLocal.products!.length + (budgetLocal.services ? budgetLocal.services.length : 0);
-        // const maxItemPerPage = (items: number) => {
-        //     return Math.ceil(items / totalItems * maxItemsPerPage);
-        // };
-        // const pages = Math.ceil(totalItems / maxItemsPerPage);
-
-        // const resultPages: BudgetTemplateInterface[] = [];
-
-        // if (pages > 1) {
-        //     for (let i = 0; i < pages; i++) {
-        //         const startP = i * maxItemPerPage(budgetLocal.products!.length);
-        //         const startS = i * maxItemPerPage(budgetLocal.services ? budgetLocal.services.length : 0);
-        //         const endP = startP + maxItemPerPage(budgetLocal.products!.length);
-        //         const endS = startS + maxItemPerPage(budgetLocal.services ? budgetLocal.services.length : 0);
-        //         const budgetPage: BudgetTemplateInterface = {
-        //             ...budgetLocal,
-        //             products: budget.products!.slice(startP, endP),
-        //             services: budget.services?.slice(startS, endS),
-        //             pageCount: i + 1,
-        //             totalPage: pages
-        //         };1
-        //         resultPages.push(budgetPage);
-        //     }
-        // }
-
-        const resultPages: BudgetTemplateInterface[] = [];
+        const maxItemPerPage = 10;
+        const maxItemFirstPage = 10; // Limite maior para primeira página
+        let resultPages: BudgetTemplateInterface[] = [];
 
         let servicesFirstPage = 0;
-        if (budgetLocal.products!.length === 6) {
+        let productsFirstPage = Math.min(budgetLocal.products!.length, maxItemFirstPage);
+        let needsSignaturePage = false;
+
+        // Primeira página com até 10 produtos
+        if (productsFirstPage > 0) {
+            servicesFirstPage = Math.max(0, maxItemFirstPage - productsFirstPage);
+            const firstPageServices = budgetLocal.services && budgetLocal.services.length ? 
+                budgetLocal.services.slice(0, Math.min(servicesFirstPage, budgetLocal.services.length)) : [];
+            
             resultPages.push({
                 ...budgetLocal,
-                products: [...budgetLocal.products],
-                services: [],
+                products: budgetLocal.products!.slice(0, productsFirstPage),
+                services: firstPageServices,
                 pageCount: 1,
             });
-        } else if (budgetLocal.products!.length < 6) {
-            servicesFirstPage = maxItemPerPage - budgetLocal.products!.length;
-            resultPages.push({
-                ...budgetLocal,
-                products: [...budgetLocal.products],
-                services: budgetLocal.services && budgetLocal.services.length ? [...budgetLocal.services.slice(0, servicesFirstPage)] : [],
-                pageCount: 1,
-            });
-        } else {
-            const pagesProducts = Math.ceil(budgetLocal.products!.length / maxItemPerPage);
-            const productsLastPage = budgetLocal.products!.length % maxItemPerPage;
+
+            // Se usou mais de 6 itens na primeira página, precisa de página de assinatura
+            if (productsFirstPage + firstPageServices.length > maxItemPerPage) {
+                needsSignaturePage = true;
+            }
+        }
+
+        // Processar produtos restantes (a partir do item maxItemFirstPage)
+        const remainingProducts = budgetLocal.products!.slice(productsFirstPage);
+        if (remainingProducts.length > 0) {
+            const pagesProducts = Math.ceil(remainingProducts.length / maxItemPerPage);
+            const productsLastPage = remainingProducts.length % maxItemPerPage || maxItemPerPage;
+            
             for (let i = 0; i < pagesProducts; i++) {
                 const startP = i * maxItemPerPage;
                 const endP = startP + maxItemPerPage;
-                if (i === 0) {
+                
+                if (i === pagesProducts - 1) {
+                    // Última página de produtos - tenta adicionar serviços
+                    const spaceAvailable = maxItemPerPage - productsLastPage;
+                    const servicesStart = servicesFirstPage;
+                    const servicesEnd = servicesStart + spaceAvailable;
+                    
                     resultPages.push({
                         ...budgetLocal,
-                        products: budgetLocal.products!.slice(startP, endP),
-                        services: [],
-                        pageCount: i + 1,
+                        products: remainingProducts.slice(startP, endP),
+                        services: budgetLocal.services && budgetLocal.services.length ? 
+                            budgetLocal.services.slice(servicesStart, servicesEnd) : [],
+                        pageCount: resultPages.length + 1,
                     });
-                } else if (i === pagesProducts - 1) {
-                    servicesFirstPage = maxItemPerPage - productsLastPage;
-                    resultPages.push({
-                        ...budgetLocal,
-                        products: budgetLocal.products!.slice(startP, endP),
-                        services: budgetLocal.services && budgetLocal.services.length ? [...budgetLocal.services.slice(0, servicesFirstPage)] : [],
-                        pageCount: i + 1,
-                    });
+                    
+                    servicesFirstPage = servicesEnd;
                 } else {
                     resultPages.push({
                         ...budgetLocal,
-                        products: budgetLocal.products!.slice(startP, endP),
+                        products: remainingProducts.slice(startP, endP),
                         services: [],
-                        pageCount: i + 1,
+                        pageCount: resultPages.length + 1,
                     });
                 }
             }
         }
 
+        // Processar serviços restantes
+        if (budgetLocal.services && budgetLocal.services.length && budgetLocal.services.length - servicesFirstPage > 0) {
+            const servicesRestantes = budgetLocal.services.length - servicesFirstPage;
+            
+            if (servicesRestantes <= maxItemPerPage) {
+                resultPages.push({
+                    ...budgetLocal,
+                    products: [],
+                    services: budgetLocal.services.slice(servicesFirstPage),
+                    pageCount: resultPages.length + 1
+                });
+            } else {
+                const remainingServices = budgetLocal.services.slice(servicesFirstPage);
+                const pagesServices = Math.ceil(remainingServices.length / maxItemPerPage);
+                
+                for (let i = 0; i < pagesServices; i++) {
+                    const startS = i * maxItemPerPage;
+                    const endS = startS + maxItemPerPage;
+
+                    resultPages.push({
+                        ...budgetLocal,
+                        products: [],
+                        services: remainingServices.slice(startS, endS),
+                        pageCount: resultPages.length + 1,
+                    });
+                }
+            }
+        }
+
+        // Se a primeira página ultrapassou 6 itens e só tem 1 página, criar página de assinatura
+        if (needsSignaturePage && resultPages.length === 1) {
+            resultPages.push({
+                ...budgetLocal,
+                products: [],
+                services: [],
+                pageCount: 2,
+            });
+        }
+
+        // Atualizar totalPage em todas as páginas
+        if (resultPages.length) {
+            resultPages = [...resultPages.map((page) => ({
+                ...page,
+                totalPage: resultPages.length,
+            }))];
+        }
+
         this.budgetSelected = resultPages.length ? resultPages : [budgetLocal];
         html?.classList.remove("hidden");
 
-        try {
-            await new Promise(resolve => setTimeout(resolve, 500));
+        // try {
+        //     await new Promise(resolve => setTimeout(resolve, 500));
 
-            const pdf = new jsPDF("p", "mm", "a4");
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
+        //     const pdf = new jsPDF("p", "mm", "a4");
+        //     const pdfWidth = pdf.internal.pageSize.getWidth();
+        //     const pdfHeight = pdf.internal.pageSize.getHeight();
 
-            // captura cada template separadamente
-            const templates = html!.querySelectorAll("template-pdf");
+        //     // captura cada template separadamente
+        //     const templates = html!.querySelectorAll("template-pdf");
 
-            for (let i = 0; i < templates.length; i++) {
-                const el = templates[i] as HTMLElement;
+        //     for (let i = 0; i < templates.length; i++) {
+        //         const el = templates[i] as HTMLElement;
 
-                const canvas = await html2canvas(el, {
-                    scale: 4,
-                    width: 794,
-                    height: 1123
-                });
-                const imgData = canvas.toDataURL("image/png");
+        //         const canvas = await html2canvas(el, {
+        //             scale: 4,
+        //             width: 794,
+        //             height: 1123
+        //         });
+        //         const imgData = canvas.toDataURL("image/png");
 
-                if (i > 0) pdf.addPage();
-                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-            }
+        //         if (i > 0) pdf.addPage();
+        //         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        //     }
 
-            pdf.save(`${budget.name}.pdf`);
-        } catch (error) {
-            console.error(error);
-            this.toast.show("Erro no download", 'error', 5000);
-        } finally {
-            html?.classList.add("hidden");
-            this.loading.stop();
-        }
+        //     pdf.save(`${budget.name}.pdf`);
+        // } catch (error) {
+        //     console.error(error);
+        //     this.toast.show("Erro no download", 'error', 5000);
+        // } finally {
+        //     html?.classList.add("hidden");
+        //     this.loading.stop();
+        // }
     }
 }
