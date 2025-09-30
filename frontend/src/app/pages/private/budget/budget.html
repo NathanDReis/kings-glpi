@@ -1,8 +1,8 @@
 <div class="card mx-2 py-12 md:mx-20 md:py-24">
     <p-toolbar class="mb-6">
         <ng-template #start>
-            <p-button label="Novo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" />
-            <p-button class="desktop" severity="danger" label="Deletar" icon="pi pi-trash" outlined (onClick)="deleteSelectedBudgets()" [disabled]="!selectedBudgets || !selectedBudgets.length" />
+            <p-button label="Novo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" class="mr-3" />
+            <p-button class="desktop mr-3" severity="danger" label="Deletar" icon="pi pi-trash" outlined (onClick)="deleteSelectedBudgets()" [disabled]="!selectedBudgets || !selectedBudgets.length" />
         </ng-template>
     </p-toolbar>
 
@@ -31,7 +31,7 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th class="desktop">
+                <th class="desktop" style="display: flex; align-items: center; justify-content: center;">
                     <p-tableHeaderCheckbox />
                 </th>
                 <th pSortableColumn="status">
@@ -69,8 +69,10 @@
         </ng-template>
         <ng-template #body let-budget>
             <tr>
-                <td class="desktop" style="width: 3rem" [ngClass]="{ 'bg-[#FACC15]': budget.status === 'pending', 'bg-[#22C55E]': budget.status === 'approved', 'bg-[#EF4444]': budget.status === 'rejected' }">
-                    <p-tableCheckbox [value]="budget" />
+                <td class="desktop" [ngClass]="{ 'bg-[#FACC15]': budget.status === 'pending', 'bg-[#22C55E]': budget.status === 'approved', 'bg-[#EF4444]': budget.status === 'rejected' }">
+                    <div style="height: 3.5rem; display: flex; align-items: center; justify-content: center;">
+                        <p-tableCheckbox [value]="budget" />
+                    </div>
                 </td>
                 <td>{{ statusMap[budget.status] }}</td>
                 <td class="desktop">{{ budget.name }}</td>

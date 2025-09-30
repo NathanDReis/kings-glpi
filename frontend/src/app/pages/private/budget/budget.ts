@@ -236,8 +236,8 @@ export class BudgetComponent implements OnInit {
             totalPage: 1
         };
 
-        const maxItemPerPage = 10;
-        const maxItemFirstPage = 10; // Limite maior para primeira página
+        const maxItemPerPage = 6;
+        const maxItemFirstPage = 8; // Limite maior para primeira página
         let resultPages: BudgetTemplateInterface[] = [];
 
         let servicesFirstPage = 0;
