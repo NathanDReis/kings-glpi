@@ -226,7 +226,7 @@ export class BudgetComponent implements OnInit {
 
 
     async download(budget: BudgetInterface): Promise<void> {
-        // this.loading.run();
+        this.loading.run();
         const html = document.querySelector('#content');
         const budgetLocal: BudgetTemplateInterface = { 
             ...budget,
@@ -349,37 +349,37 @@ export class BudgetComponent implements OnInit {
         this.budgetSelected = resultPages.length ? resultPages : [budgetLocal];
         html?.classList.remove("hidden");
 
-        // try {
-        //     await new Promise(resolve => setTimeout(resolve, 500));
+        try {
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-        //     const pdf = new jsPDF("p", "mm", "a4");
-        //     const pdfWidth = pdf.internal.pageSize.getWidth();
-        //     const pdfHeight = pdf.internal.pageSize.getHeight();
+            const pdf = new jsPDF("p", "mm", "a4");
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
 
-        //     // captura cada template separadamente
-        //     const templates = html!.querySelectorAll("template-pdf");
+            // captura cada template separadamente
+            const templates = html!.querySelectorAll("template-pdf");
 
-        //     for (let i = 0; i < templates.length; i++) {
-        //         const el = templates[i] as HTMLElement;
+            for (let i = 0; i < templates.length; i++) {
+                const el = templates[i] as HTMLElement;
 
-        //         const canvas = await html2canvas(el, {
-        //             scale: 4,
-        //             width: 794,
-        //             height: 1123
-        //         });
-        //         const imgData = canvas.toDataURL("image/png");
+                const canvas = await html2canvas(el, {
+                    scale: 4,
+                    width: 794,
+                    height: 1123
+                });
+                const imgData = canvas.toDataURL("image/png");
 
-        //         if (i > 0) pdf.addPage();
-        //         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        //     }
+                if (i > 0) pdf.addPage();
+                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            }
 
-        //     pdf.save(`${budget.name}.pdf`);
-        // } catch (error) {
-        //     console.error(error);
-        //     this.toast.show("Erro no download", 'error', 5000);
-        // } finally {
-        //     html?.classList.add("hidden");
-        //     this.loading.stop();
-        // }
+            pdf.save(`${budget.name}.pdf`);
+        } catch (error) {
+            console.error(error);
+            this.toast.show("Erro no download", 'error', 5000);
+        } finally {
+            html?.classList.add("hidden");
+            this.loading.stop();
+        }
     }
 }
