@@ -93,9 +93,6 @@
       </ng-template>
     </p-table>
   
-    <div class="text-right mb-3">
-      <span class="text-sm">TOTAL: {{ getProductsTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
-    </div>
   }
 
   @if (budget?.services?.length) {
@@ -125,18 +122,13 @@
       </ng-template>
     </p-table>
   
-    <div class="text-right mb-2">
-      <span class="text-sm">TOTAL: {{ getServicesTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
-    </div>
   }
-
-  @if (budget?.products?.length || budget?.services?.length) {
-    <div class="text-right mb-3">
+  
+  @if (budget!.pageCount == budget!.totalPage) {
+    <div class="text-right mb-3 mt-3">
       <span class="font-semibold text-sm">TOTAL DO ORÇAMENTO: {{ budget?.price| currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
     </div>
-  }
 
-  @if (budget!.pageCount == budget!.totalPage) {
     <!-- Signature -->
     <div class="mt-14">
       <div class="border-t template-border-black w-80 mx-auto"></div>
