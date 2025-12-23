@@ -2,30 +2,23 @@
     <p-toolbar class="mb-6">
         <ng-template #start>
             <p-button label="Novo" icon="pi pi-plus" class="mr-2" (onClick)="openNew()" class="mr-3" />
-            <p-button class="desktop mr-3" severity="danger" label="Deletar" icon="pi pi-trash" outlined (onClick)="deleteSelectedBudgets()" [disabled]="!selectedBudgets || !selectedBudgets.length" />
+            <p-button class="desktop mr-3" severity="danger" label="Deletar" icon="pi pi-trash" outlined
+                (onClick)="deleteSelectedBudgets()" [disabled]="!selectedBudgets || !selectedBudgets.length" />
         </ng-template>
     </p-toolbar>
 
-    <p-table
-        #dt
-        [value]="budgets"
-        [rows]="5"
-        [columns]="cols"
-        [paginator]="true"
-        [globalFilterFields]="['name', 'responsible', 'client.name', 'price', 'status']"
-        [(selection)]="selectedBudgets"
-        [rowHover]="true"
-        dataKey="id"
+    <p-table #dt [value]="budgets" [rows]="5" [columns]="cols" [paginator]="true"
+        [globalFilterFields]="['name', 'responsible', 'client.name', 'price', 'status']" [(selection)]="selectedBudgets"
+        [rowHover]="true" dataKey="id"
         currentPageReportTemplate="Mostrando {first} - {last} de {totalRecords} resultados"
-        [showCurrentPageReport]="true"
-        size="small"
-    >
+        [showCurrentPageReport]="true" size="small">
         <ng-template #caption>
             <div class="flex items-center justify-between">
                 <h5 class="m-0">Meus Orçamentos</h5>
                 <p-iconfield>
                     <p-inputicon class="pi pi-search" />
-                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Consultar..." fluid />
+                    <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                        placeholder="Consultar..." fluid />
                 </p-iconfield>
             </div>
         </ng-template>
@@ -69,7 +62,8 @@
         </ng-template>
         <ng-template #body let-budget>
             <tr>
-                <td class="desktop" [ngClass]="{ 'bg-[#FACC15]': budget.status === 'pending', 'bg-[#22C55E]': budget.status === 'approved', 'bg-[#EF4444]': budget.status === 'rejected' }">
+                <td class="desktop"
+                    [ngClass]="{ 'bg-[#FACC15]': budget.status === 'pending', 'bg-[#22C55E]': budget.status === 'approved', 'bg-[#EF4444]': budget.status === 'rejected' }">
                     <div style="height: 3.5rem; display: flex; align-items: center; justify-content: center;">
                         <p-tableCheckbox [value]="budget" />
                     </div>
@@ -79,13 +73,17 @@
                 <td>{{ budget.price | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
                 <td class="desktop">{{ budget.responsible }}</td>
                 <td>
-                    <p-button icon="pi pi-info" class="mr-3" [rounded]="true" [outlined]="true" [raised]="false" severity="info" (onClick)="openDialogClient(budget.client)" />
+                    <p-button icon="pi pi-info" class="mr-3" [rounded]="true" [outlined]="true" [raised]="false"
+                        severity="info" (onClick)="openDialogClient(budget.client)" />
                     {{ budget.client?.name }}
                 </td>
                 <td>
-                    <p-button icon="pi pi-file-pdf" severity="contrast" class="mr-2" [rounded]="true" [outlined]="true" (click)="download(budget)" />
-                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editBudget(budget)" />
-                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteBudget(budget)" />
+                    <p-button icon="pi pi-file-pdf" severity="contrast" class="mr-2" [rounded]="true" [outlined]="true"
+                        (click)="download(budget)" />
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true"
+                        (click)="editBudget(budget)" />
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"
+                        (click)="deleteBudget(budget)" />
                 </td>
             </tr>
         </ng-template>
@@ -93,27 +91,61 @@
 
     <div id="content" #content class="hidden">
         @for (budget of budgetSelected; track budget.id) {
-            <template-pdf [budget]="budget"></template-pdf>
+        <template-pdf [budget]="budget"></template-pdf>
         }
     </div>
 
-    <p-dialog header="Informações de contato" [modal]="true" [(visible)]="visibleInfoClient" [style]="{ width: '25rem' }">
-        <span class="p-text-secondary block mb-8">{{ client.name }}</span>
-        <div class="flex items-center gap-4 mb-4">
-            <label class="font-semibold w-24">E-mail</label>
-            <span>{{ client.email }}</span>
-        </div>
-        <div class="flex items-center gap-4 mb-4">
-            <label class="font-semibold w-24">Celular</label>
-            <span>{{ client.phone }}</span>
-        </div>
-        <div class="flex items-center gap-4 mb-4">
-            <label class="font-semibold w-24">
-                {{ client.cnpj ? 'CNPJ' : 'CPF' }}
-            </label>
-            <span>
-                {{ client.cnpj ? client.cnpj : client.cpf }}
-            </span>
+    <p-dialog header="Detalhes do Cliente" [modal]="true" [(visible)]="visibleInfoClient"
+        [style]="{ width: '100%', maxWidth: '28rem' }" [draggable]="false" [resizable]="false"
+        styleClass="p-0 overflow-hidden rounded-2xl">
+        <div class="flex flex-col items-center pt-2 pb-6">
+            <!-- Avatar/Icon Placeholder -->
+            <div
+                class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-sm">
+                {{ client.name.charAt(0).toUpperCase() }}
+            </div>
+
+            <h2 class="text-xl font-bold text-slate-800 text-center px-4">{{ client.name }}</h2>
+            <p class="text-slate-500 text-sm mb-6">Informações de Contato</p>
+
+            <div class="w-full space-y-3 px-2">
+                <!-- Email -->
+                <div class="flex items-center p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group">
+                    <div
+                        class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 group-hover:text-blue-500 transition-colors shadow-sm">
+                        <i class="pi pi-envelope"></i>
+                    </div>
+                    <div class="ml-3 overflow-hidden">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">E-mail</p>
+                        <p class="text-slate-800 font-medium truncate" title="{{ client.email }}">{{ client.email }}</p>
+                    </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="flex items-center p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group">
+                    <div
+                        class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 group-hover:text-green-500 transition-colors shadow-sm">
+                        <i class="pi pi-phone"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Telefone</p>
+                        <p class="text-slate-800 font-medium">{{ client.phone }}</p>
+                    </div>
+                </div>
+
+                <!-- Document -->
+                <div class="flex items-center p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors group">
+                    <div
+                        class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 group-hover:text-purple-500 transition-colors shadow-sm">
+                        <i class="pi pi-id-card"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">{{ client.cnpj ? 'CNPJ'
+                            : 'CPF' }}</p>
+                        <p class="text-slate-800 font-medium">{{ client.cnpj ? client.cnpj : client.cpf }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </p-dialog>
 

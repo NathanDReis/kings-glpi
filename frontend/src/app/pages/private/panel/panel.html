@@ -1,3 +1,107 @@
-<main class="h-100 flex items-center justify-center">
+<div class="p-4 md:p-6 lg:p-8 animate-fade-in">
+  <div class="mb-8">
+    <h1 class="text-2xl md:text-3xl font-bold text-slate-800">Painel de Controle</h1>
+    <p class="text-slate-500 mt-1">Visão geral do sistema e indicadores de performance</p>
+  </div>
+  
+  <!-- Main Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8">
     
-</main>
+    <!-- Total Budgets -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+          <i class="pi pi-file text-xl"></i>
+        </div>
+        <span class="text-xs font-semibold px-2 py-1 rounded-full bg-slate-100 text-slate-600">Total</span>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-slate-800 mb-1">{{ totalBudgets }}</p>
+        <p class="text-sm font-medium text-slate-500">Orçamentos Cadastrados</p>
+      </div>
+    </div>
+    
+    <!-- Total Products -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
+          <i class="pi pi-box text-xl"></i>
+        </div>
+        <span class="text-xs font-semibold px-2 py-1 rounded-full bg-slate-100 text-slate-600">Base</span>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-slate-800 mb-1">{{ totalProducts }}</p>
+        <p class="text-sm font-medium text-slate-500">Produtos no Sistema</p>
+      </div>
+    </div>
+
+    <!-- Total Value -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100 md:col-span-2 group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+          <i class="pi pi-dollar text-xl"></i>
+        </div>
+        <span class="text-xs font-semibold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">Receita Potencial</span>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-slate-800 mb-1">{{ totalValue | currency:'BRL' }}</p>
+        <p class="text-sm font-medium text-slate-500">Valor Total Acumulado</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+    
+    <!-- Status Cards -->
+    <div class="space-y-4 md:space-y-6 lg:col-span-1">
+      <h2 class="text-lg font-bold text-slate-800">Status dos Orçamentos</h2>
+      
+      <!-- Pending -->
+      <div class="bg-white p-5 rounded-xl border-l-[6px] border-yellow-500 shadow-sm flex items-center justify-between hover:translate-x-1 transition-transform cursor-pointer group">
+        <div>
+           <p class="text-xs font-bold uppercase tracking-wider text-yellow-600 mb-1 group-hover:text-yellow-700">Pendente</p>
+           <p class="text-2xl font-bold text-slate-800">{{ budgetsPending }}</p>
+        </div>
+        <i class="pi pi-clock text-yellow-500/20 text-4xl group-hover:text-yellow-500/40 transition-colors"></i>
+      </div>
+
+      <!-- Approved -->
+      <div class="bg-white p-5 rounded-xl border-l-[6px] border-green-500 shadow-sm flex items-center justify-between hover:translate-x-1 transition-transform cursor-pointer group">
+        <div>
+           <p class="text-xs font-bold uppercase tracking-wider text-green-600 mb-1 group-hover:text-green-700">Aprovado</p>
+           <p class="text-2xl font-bold text-slate-800">{{ budgetsApproved }}</p>
+        </div>
+        <i class="pi pi-check-circle text-green-500/20 text-4xl group-hover:text-green-500/40 transition-colors"></i>
+      </div>
+
+      <!-- Rejected -->
+      <div class="bg-white p-5 rounded-xl border-l-[6px] border-red-500 shadow-sm flex items-center justify-between hover:translate-x-1 transition-transform cursor-pointer group">
+        <div>
+           <p class="text-xs font-bold uppercase tracking-wider text-red-600 mb-1 group-hover:text-red-700">Rejeitado</p>
+           <p class="text-2xl font-bold text-slate-800">{{ budgetsRejected }}</p>
+        </div>
+        <i class="pi pi-times-circle text-red-500/20 text-4xl group-hover:text-red-500/40 transition-colors"></i>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-slate-800">Distribuição Gráfica</h2>
+        <button class="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+          <i class="pi pi-ellipsis-h"></i>
+        </button>
+      </div>
+      <div class="w-full h-[300px] md:h-[400px] flex items-center justify-center relative">
+        <p-chart type="doughnut" [data]="chartData" [options]="chartOptions" class="w-full h-full"></p-chart>
+        
+        <!-- Empty State (Hidden if data exists) -->
+        <div *ngIf="totalBudgets === 0" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-10 transition-opacity">
+          <i class="pi pi-chart-pie text-slate-300 text-5xl mb-3"></i>
+          <p class="text-slate-500 font-medium">Sem dados para exibir</p>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
