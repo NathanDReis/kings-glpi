@@ -363,14 +363,14 @@ export class BudgetComponent implements OnInit {
                 const el = templates[i] as HTMLElement;
 
                 const canvas = await html2canvas(el, {
-                    scale: 4,
+                    scale: 2,
                     width: 794,
                     height: 1123
                 });
-                const imgData = canvas.toDataURL("image/png");
+                const imgData = canvas.toDataURL("image/jpeg", 0.75);
 
                 if (i > 0) pdf.addPage();
-                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+                pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
             }
 
             pdf.save(`${budget.name}.pdf`);

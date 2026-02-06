@@ -22,7 +22,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/.htaccess",
+              "src/robots.txt",
+              "src/sitemap.xml",
+              "src/googled1bf8fd5f57804a2.html"
             ],
             "styles": [
               "src/styles.css"
