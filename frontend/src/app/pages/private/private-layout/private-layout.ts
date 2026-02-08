@@ -102,7 +102,7 @@ export class PrivateLayoutComponent implements AfterViewInit, OnInit {
     {
       label: 'MLK Tecnologia',
       icon: 'pi pi-fw pi-shield',
-      command: () => window.open('https://mlktecnologia.com.br')
+      command: () => this.router.navigate(['/'])
     },
     {
       separator: true

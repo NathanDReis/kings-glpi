@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite/**/*.js";
 @custom-variant dark (&:where(.dark, .dark *));
 @import "primeicons/primeicons.css";
 

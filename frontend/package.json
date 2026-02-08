@@ -34,6 +34,7 @@
     "@primeuix/themes": "^1.2.3",
     "@tailwindcss/postcss": "^4.1.12",
     "chart.js": "^4.5.1",
+    "flowbite": "^4.0.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.2",
     "postcss": "^8.5.6",

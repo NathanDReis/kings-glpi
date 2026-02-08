@@ -9,8 +9,14 @@ import { ProductComponent } from './pages/private/product/product';
 import { BudgetComponent } from './pages/private/budget/budget';
 import { ConfigComponent } from './pages/private/config/config';
 import { NewBudgetComponent } from './pages/private/budget/new-budget/new-budget';
+import { LandingPageComponent } from './pages/public/landing-page/landing-page.component';
 
 export const routes: Routes = [
+  {
+    path: '',
+    component: LandingPageComponent,
+    pathMatch: 'full'
+  },
   {
     path: 'credenciais',
     component: PublicLayoutComponent,
@@ -31,7 +37,7 @@ export const routes: Routes = [
       { path: 'orcamento-criar', component: NewBudgetComponent },
       { path: 'orcamento-editar/:id', component: NewBudgetComponent },
       { path: 'configuracoes', component: ConfigComponent },
-      { path: '**', redirectTo: '/painel' },
     ]
   },
+  { path: '**', redirectTo: '' }, // Redirect to home/landing page on unknown
 ];
